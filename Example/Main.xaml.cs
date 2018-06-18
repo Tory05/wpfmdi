@@ -4,13 +4,14 @@ using System.Windows.Media.Imaging;
 using Example.Controls;
 using WPF.MDI;
 using System.Windows.Controls;
+using MahApps.Metro.Controls;
 
 namespace Example
 {
 	/// <summary>
 	/// Interaction logic for Main.xaml
 	/// </summary>
-	public partial class Main : Window
+	public partial class Main : MetroWindow
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Main"/> class.
@@ -64,8 +65,9 @@ namespace Example
 			Generic.IsChecked = true;
 			Luna.IsChecked = false;
 			Aero.IsChecked = false;
+            Metro.IsChecked = false;
 
-			Container.Theme = ThemeType.Generic;
+            Container.Theme = ThemeType.Generic;
 		}
 
 		/// <summary>
@@ -78,8 +80,9 @@ namespace Example
 			Generic.IsChecked = false;
 			Luna.IsChecked = true;
 			Aero.IsChecked = false;
+            Metro.IsChecked = false;
 
-			Container.Theme = ThemeType.Luna;
+            Container.Theme = ThemeType.Luna;
 		}
 
 		/// <summary>
@@ -92,15 +95,30 @@ namespace Example
 			Generic.IsChecked = false;
 			Luna.IsChecked = false;
 			Aero.IsChecked = true;
+            Metro.IsChecked = false;
 
-			Container.Theme = ThemeType.Aero;
+            Container.Theme = ThemeType.Aero;
 		}
+        /// <summary>
+		/// Handles the Click event of the Metro control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+		private void Metro_Click(object sender, RoutedEventArgs e)
+        {
+            Generic.IsChecked = false;
+            Luna.IsChecked = false;
+            Aero.IsChecked = false;
+            Metro.IsChecked = true;
 
-		#endregion
+            Container.Theme = ThemeType.Metro;
+        }
 
-		#region Menu Events
+        #endregion
 
-		int ooo = 1;
+        #region Menu Events
+
+        int ooo = 1;
 
 		/// <summary>
 		/// Handles the Click event of the 'Normal window' menu item.

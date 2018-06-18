@@ -16,6 +16,10 @@
 		/// <summary>
 		/// Windows Vista and 7 theme.
 		/// </summary>
-		Aero
-	}
+		Aero,
+        /// <summary>
+        /// Mahappps Metro theme.
+        /// </summary>
+        Metro
+    }
 }

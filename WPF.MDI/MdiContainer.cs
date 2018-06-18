@@ -449,7 +449,11 @@ namespace WPF.MDI
 				case ThemeType.Aero:
 					Application.Current.Resources.MergedDictionaries.Add(currentResourceDictionary = new ResourceDictionary { Source = new Uri(@"/WPF.MDI;component/Themes/Aero.xaml", UriKind.Relative) });
 					break;
-			}
+                //add metro to select
+                case ThemeType.Metro:
+                    Application.Current.Resources.MergedDictionaries.Add(currentResourceDictionary = new ResourceDictionary { Source = new Uri(@"/WPF.MDI;component/Themes/Metro.xaml", UriKind.Relative) });
+                    break;
+            }
 
 			//if (max_mode)
 			//    mdiContainer.ActiveMdiChild.WindowState = WindowState.Maximized;
