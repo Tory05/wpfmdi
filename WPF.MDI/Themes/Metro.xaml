@@ -160,7 +160,7 @@
         </Setter>
     </Style>
 
-    <SolidColorBrush x:Key="CloseBorderBrush" Color="{DynamicResource AccentBaseColor}" />
+    <SolidColorBrush x:Key="CloseBorderBrush" Color="{DynamicResource AccentBaseColor2}" />
 
     <SolidColorBrush x:Key="CloseFocusedBaseBorder" Color="{DynamicResource AccentColor2}" />
 
@@ -174,13 +174,13 @@
         <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="1"/>
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="CloseUnfocusedSubBorderBrush" Color="{DynamicResource AccentColor}" />
+    <SolidColorBrush x:Key="CloseUnfocusedSubBorderBrush" />
 
     <LinearGradientBrush x:Key="CloseOverBackgroundBrush" EndPoint="0,1">
-        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.0" />
-        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.5" />
-        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.5" />
-        <GradientStop Color="{DynamicResource AccentColor}" Offset="1.0" />
+        <GradientStop Color="{DynamicResource HighlightColor}" Offset="0.0" />
+        <GradientStop Color="{DynamicResource HighlightColor}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource HighlightColor}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource HighlightColor}" Offset="1.0" />
     </LinearGradientBrush>
 
     <Style x:Key="CloseButtonStyle" TargetType="{x:Type Button}">
