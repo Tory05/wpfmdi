@@ -265,6 +265,23 @@ namespace Example
 		{
 			Window1.ShowIcon = false;
 		}
-		#endregion
-	}
+        #endregion
+
+        private MetroWindow accentThemeTestWindow;
+        private void ChangeAppStyleButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (accentThemeTestWindow != null)
+            {
+                accentThemeTestWindow.Activate();
+                return;
+            }
+
+            accentThemeTestWindow = new AccentStyleWindow();
+            accentThemeTestWindow.Owner = this;
+            accentThemeTestWindow.Closed += (o, args) => accentThemeTestWindow = null;
+            accentThemeTestWindow.Left = Left + ActualWidth / 2.0;
+            accentThemeTestWindow.Top = Top + ActualHeight / 2.0;
+            accentThemeTestWindow.Show();
+        }
+    }
 }

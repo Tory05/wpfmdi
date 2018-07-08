@@ -7,109 +7,109 @@
 
 
 
-    <Color x:Key="AccentColor">#CC161717</Color>
+    <!--<Color x:Key="AccentColor">#CC161717</Color>
     <Color x:Key="AccentBaseColor">#CC161717</Color>
-    <Color x:Key="AccentColor2">#868686</Color>
+    <Color x:Key="AccentColor2">#868686</Color>-->
 
     <!--  re-set brushes too  -->
-    <SolidColorBrush x:Key="HighlightBrush" Color="{StaticResource HighlightColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="AccentBaseColorBrush" Color="{StaticResource AccentBaseColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="AccentColorBrush" Color="{StaticResource AccentColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="AccentColorBrush2" Color="{StaticResource AccentColor2}" options:Freeze="True" />
+    <SolidColorBrush x:Key="HighlightBrush" Color="{DynamicResource HighlightColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="AccentBaseColorBrush" Color="{DynamicResource AccentBaseColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="AccentColorBrush" Color="{DynamicResource AccentColor2}" options:Freeze="True" />
+    <SolidColorBrush x:Key="AccentColorBrush2" Color="{DynamicResource AccentColor}" options:Freeze="True" />
 
-    <SolidColorBrush x:Key="WindowTitleColorBrush" Color="{StaticResource AccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="WindowTitleColorBrush" Color="{DynamicResource AccentColor2}" options:Freeze="True" />
 
     <LinearGradientBrush x:Key="ProgressBrush" StartPoint="1.002,0.5" EndPoint="0.001,0.5" options:Freeze="True">
-        <GradientStop Offset="0" Color="{StaticResource HighlightColor}" />
+        <GradientStop Offset="0" Color="{DynamicResource HighlightColor}" />
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="CheckmarkFill" Color="{StaticResource AccentColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="RightArrowFill" Color="{StaticResource AccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="CheckmarkFill" Color="{DynamicResource AccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="RightArrowFill" Color="{DynamicResource AccentColor}" options:Freeze="True" />
 
-    <Color x:Key="IdealForegroundColor">White</Color>
-    <SolidColorBrush x:Key="IdealForegroundColorBrush" Color="{StaticResource IdealForegroundColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="IdealForegroundDisabledBrush" Opacity="0.4" Color="{StaticResource IdealForegroundColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="AccentSelectedColorBrush" Color="{StaticResource IdealForegroundColor}" options:Freeze="True" />
+    <!--<Color x:Key="IdealForegroundColor" >White</Color>-->
+    <SolidColorBrush x:Key="IdealForegroundColorBrush" Color="{StaticResource WindowBackgroundBrush}" options:Freeze="True" />
+    <SolidColorBrush x:Key="IdealForegroundDisabledBrush" Opacity="0.4" Color="{StaticResource WindowBackgroundBrush}" options:Freeze="True" />
+    <SolidColorBrush x:Key="AccentSelectedColorBrush" Color="{StaticResource WindowBackgroundBrush}" options:Freeze="True" />
 
     <!--  DataGrid brushes  -->
-    <SolidColorBrush x:Key="MetroDataGrid.HighlightBrush" Color="{StaticResource AccentColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="MetroDataGrid.HighlightTextBrush" Color="{StaticResource IdealForegroundColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="MetroDataGrid.FocusBorderBrush" Color="{StaticResource AccentColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="MetroDataGrid.InactiveSelectionHighlightBrush" Color="{StaticResource AccentColor2}" options:Freeze="True" />
-    <SolidColorBrush x:Key="MetroDataGrid.InactiveSelectionHighlightTextBrush" Color="{StaticResource IdealForegroundColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MetroDataGrid.HighlightBrush" Color="{DynamicResource AccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MetroDataGrid.HighlightTextBrush" Color="{DynamicResource IdealForegroundColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MetroDataGrid.FocusBorderBrush" Color="{DynamicResource AccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MetroDataGrid.InactiveSelectionHighlightBrush" Color="{DynamicResource AccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MetroDataGrid.InactiveSelectionHighlightTextBrush" Color="{DynamicResource IdealForegroundColor}" options:Freeze="True" />
 
-    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OnSwitchBrush.Win10" Color="{StaticResource AccentColor}" options:Freeze="True" />
-    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OnSwitchMouseOverBrush.Win10" Color="{StaticResource AccentColor2}" options:Freeze="True" />
-    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.ThumbIndicatorCheckedBrush.Win10" Color="{StaticResource IdealForegroundColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OnSwitchBrush.Win10" Color="{DynamicResource AccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OnSwitchMouseOverBrush.Win10" Color="{DynamicResource AccentColor}" options:Freeze="True" />
+    <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.ThumbIndicatorCheckedBrush.Win10" Color="{DynamicResource IdealForegroundColor}" options:Freeze="True" />
 
     <!-- metro code-->
-    <SolidColorBrush x:Key="valami" Color="{StaticResource AccentColor}" />
-    <SolidColorBrush x:Key="NormalBorderBrush" Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="valami" Color="{DynamicResource AccentColor2}" />
+    <SolidColorBrush x:Key="NormalBorderBrush" Color="{DynamicResource AccentColor2}" />
 
     <LinearGradientBrush x:Key="NormalSubBorderBackground" EndPoint="0,1">
-        <GradientStop Color="{StaticResource AccentBaseColor}" Offset="0.0" />
-        <GradientStop Color="{StaticResource AccentBaseColor}" Offset="0.5" />
-        <GradientStop Color="{StaticResource AccentBaseColor}" Offset="0.5" />
-        <GradientStop Color="{StaticResource AccentBaseColor}" Offset="1.0" />
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0.0" />
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="1.0" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="NormalSubBorderBrush" EndPoint="0,1">
-        <GradientStop Color="{StaticResource AccentBaseColor}" Offset="0.0" />
-        <GradientStop Color="{StaticResource AccentBaseColor}" Offset="0.5" />
-        <GradientStop Color="{StaticResource AccentBaseColor}" Offset="0.5" />
-        <GradientStop Color="{StaticResource AccentBaseColor}" Offset="1.0" />
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0.0" />
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="1.0" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="NormalUnfocusedBackgroundBrush" EndPoint="0,1">
-        <GradientStop Color="#808080" Offset="0"/>
-        <GradientStop Color="#808080" Offset="1"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="1"/>
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="NormalUnfocusedBorderBrush" EndPoint="0,1">
-        <GradientStop Color="#808080" Offset="0"/>
-        <GradientStop Color="#808080" Offset="1"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="1"/>
     </LinearGradientBrush>
 
     <SolidColorBrush x:Key="NormalUnfocusedSubBorderBrush" Color="#808080" />
 
     <LinearGradientBrush x:Key="NormalOverBackgroundBrush" EndPoint="0,1">
-        <GradientStop Color="{StaticResource AccentColor2}" Offset="0.0" />
-        <GradientStop Color="{StaticResource AccentColor2}" Offset="0.5" />
-        <GradientStop Color="{StaticResource AccentColor2}" Offset="0.5" />
-        <GradientStop Color="{StaticResource AccentColor2}" Offset="1.0" />
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.0" />
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="1.0" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="NormalOverBorderBrush" EndPoint="0,1">
-        <GradientStop Color="{StaticResource AccentColor2}" Offset="0.0" />
-        <GradientStop Color="{StaticResource AccentColor2}" Offset="0.5" />
-        <GradientStop Color="{StaticResource AccentColor2}" Offset="0.5" />
-        <GradientStop Color="{StaticResource AccentColor2}" Offset="1.0" />
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.0" />
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="1.0" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="NormalDisabledBackgroundBrush" EndPoint="0,1">
-        <GradientStop Color="#FFB5CAE1" Offset="0"/>
-        <GradientStop Color="#FFB7D0E9" Offset="1"/>
-        <GradientStop Color="#FFB5CCE5" Offset="0.5"/>
-        <GradientStop Color="#FFA3BCD7" Offset="0.5"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="1"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0.5"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0.5"/>
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="NormalDisabledBorderBrush" EndPoint="0,1">
-        <GradientStop Color="#FFC2D3E6" Offset="0"/>
-        <GradientStop Color="#FFC9DDF0" Offset="1"/>
-        <GradientStop Color="#FFC4D7EA" Offset="0.5"/>
-        <GradientStop Color="#FFBBCEE3" Offset="0.5"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="1"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0.5"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0.5"/>
     </LinearGradientBrush>
 
     <SolidColorBrush x:Key="NormalDisabledSubBorderBrush" Color="#FF859BB5" />
 
     <LinearGradientBrush x:Key="NormalDisabledFocusedBackgroundBrush" EndPoint="0,1">
-        <GradientStop Color="#FFC4D2E0" Offset="0"/>
-        <GradientStop Color="#FFD5E3F2" Offset="1"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="1"/>
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="NormalDisabledFocusedBorderBrush" EndPoint="0,1">
-        <GradientStop Color="#FFD3DEE9" Offset="0"/>
-        <GradientStop Color="#FFE2EDF7" Offset="1"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="1"/>
     </LinearGradientBrush>
 
     <Style x:Key="WindowButtonStyle" TargetType="{x:Type Button}">
@@ -160,27 +160,27 @@
         </Setter>
     </Style>
 
-    <SolidColorBrush x:Key="CloseBorderBrush" Color="{StaticResource AccentBaseColor}" />
+    <SolidColorBrush x:Key="CloseBorderBrush" Color="{DynamicResource AccentBaseColor}" />
 
-    <SolidColorBrush x:Key="CloseFocusedBaseBorder" Color="{StaticResource AccentColor2}" />
+    <SolidColorBrush x:Key="CloseFocusedBaseBorder" Color="{DynamicResource AccentColor2}" />
 
     <LinearGradientBrush x:Key="CloseUnfocusedBackgroundBrush" EndPoint="0,1">
-        <GradientStop Color="#808080" Offset="0"/>
-        <GradientStop Color="#808080" Offset="1"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="1"/>
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="CloseUnfocusedBorderBrush" EndPoint="0,1">
-        <GradientStop Color="#808080" Offset="0"/>
-        <GradientStop Color="#808080" Offset="1"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0"/>
+        <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="1"/>
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="CloseUnfocusedSubBorderBrush" Color="#808080" />
+    <SolidColorBrush x:Key="CloseUnfocusedSubBorderBrush" Color="{DynamicResource AccentColor}" />
 
     <LinearGradientBrush x:Key="CloseOverBackgroundBrush" EndPoint="0,1">
-        <GradientStop Color="{StaticResource AccentColor2}" Offset="0.0" />
-        <GradientStop Color="{StaticResource AccentColor2}" Offset="0.5" />
-        <GradientStop Color="{StaticResource AccentColor2}" Offset="0.5" />
-        <GradientStop Color="{StaticResource AccentColor2}" Offset="1.0" />
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.0" />
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.5" />
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="1.0" />
     </LinearGradientBrush>
 
     <Style x:Key="CloseButtonStyle" TargetType="{x:Type Button}">
@@ -221,23 +221,23 @@
         </Setter>
     </Style>
 
-    <SolidColorBrush x:Key="MaximizedBaseBorderBrush" Color="#FF98A6B4" />
-    <SolidColorBrush x:Key="MaximizedDownBaseBorderBrush" Color="#FF6F7D8B" />
+    <SolidColorBrush x:Key="MaximizedBaseBorderBrush" Color="{DynamicResource IdealForegroundColor}" />
+    <SolidColorBrush x:Key="MaximizedDownBaseBorderBrush" Color="{DynamicResource IdealForegroundColor}" />
 
     <LinearGradientBrush x:Key="MaximizedSubBorderBrush" EndPoint="0,1">
-        <GradientStop Color="#FFF6FAFF" Offset="0"/>
-        <GradientStop Color="#FFF6FAFF" Offset="0.15"/>
-        <GradientStop Color="#FFE9F3FF" Offset="0.15"/>
-        <GradientStop Color="#FFE3F1FF" Offset="1"/>
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0"/>
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.15"/>
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.15"/>
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="1"/>
     </LinearGradientBrush>
 
     <SolidColorBrush x:Key="MaximizedDownSubBorderBrush" Color="#d0deec" />
 
     <LinearGradientBrush x:Key="MaximizedBorderBackgroundBrush" EndPoint="0,1">
-        <GradientStop Color="#FFF1F8FF" Offset="0"/>
-        <GradientStop Color="#FFF1F8FF" Offset="0.15"/>
-        <GradientStop Color="#FFDEECFA" Offset="0.15"/>
-        <GradientStop Color="#FFDAE8F6" Offset="1"/>
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0"/>
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.15"/>
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="0.15"/>
+        <GradientStop Color="{DynamicResource AccentColor}" Offset="1"/>
     </LinearGradientBrush>
 
     <Style x:Key="MaximizedButtonStyle" TargetType="{x:Type Button}">
@@ -269,13 +269,13 @@
         </Setter>
     </Style>
 
-    <SolidColorBrush x:Key="BackBorderBackgroundBrush" Color="{StaticResource AccentBaseColor}" />
-    <SolidColorBrush x:Key="BackBorderBrush" Color="{StaticResource AccentBaseColor}" />
+    <SolidColorBrush x:Key="BackBorderBackgroundBrush" Color="{DynamicResource AccentColor2}" />
+    <SolidColorBrush x:Key="BackBorderBrush" Color="{DynamicResource AccentColor2}" />
 
-    <SolidColorBrush x:Key="NearBorderBrush" Color="White" />
-    <SolidColorBrush x:Key="FarBorderBrush" Color="{StaticResource AccentBaseColor}" />
+    <SolidColorBrush x:Key="NearBorderBrush" Color="{DynamicResource AccentColor}" />
+    <SolidColorBrush x:Key="FarBorderBrush" Color="{DynamicResource AccentColor2}" />
 
-    <SolidColorBrush x:Key="ChildBackground" Color="{StaticResource IdealForegroundColor}" />
+    <SolidColorBrush x:Key="ChildBackground" Color="{DynamicResource IdealForegroundColor}" />
 
     <BitmapImage x:Key="RestoreImage" UriSource="/WPF.MDI;component/Themes/Aero/Restore.png" />
 
