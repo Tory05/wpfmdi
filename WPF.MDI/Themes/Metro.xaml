@@ -20,11 +20,6 @@
     <SolidColorBrush x:Key="CheckmarkFill" Color="{DynamicResource AccentColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="RightArrowFill" Color="{DynamicResource AccentColor}" options:Freeze="True" />
 
-    <!--<Color x:Key="IdealForegroundColor" >White</Color>-->
-    <SolidColorBrush x:Key="IdealForegroundColorBrush" Color="{StaticResource WindowBackgroundBrush}" options:Freeze="True" />
-    <SolidColorBrush x:Key="IdealForegroundDisabledBrush" Opacity="0.4" Color="{StaticResource WindowBackgroundBrush}" options:Freeze="True" />
-    <SolidColorBrush x:Key="AccentSelectedColorBrush" Color="{StaticResource WindowBackgroundBrush}" options:Freeze="True" />
-
     <!--  DataGrid brushes  -->
     <SolidColorBrush x:Key="MetroDataGrid.HighlightBrush" Color="{DynamicResource AccentColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="MetroDataGrid.HighlightTextBrush" Color="{DynamicResource IdealForegroundColor}" options:Freeze="True" />
