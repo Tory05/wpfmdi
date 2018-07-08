@@ -5,4 +5,4 @@ A library to add the traditional Windows Forms Multiple Document Interface (MDI)
 
 ![](https://github.com/Tory05/wpfmdi/blob/master/Capture.JPG)
 
-08/07/18 reconfigured tu use resource dictionary and fixed window control highlight (close,minimize,maximize)
+08/07/18 Reconfigured to use resource dictionary and fixed window control highlight (close,minimize,maximize)
