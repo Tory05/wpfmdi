@@ -5,12 +5,6 @@
                     xmlns:options="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
                     mc:Ignorable="options">
 
-
-
-    <!--<Color x:Key="AccentColor">#CC161717</Color>
-    <Color x:Key="AccentBaseColor">#CC161717</Color>
-    <Color x:Key="AccentColor2">#868686</Color>-->
-
     <!--  re-set brushes too  -->
     <SolidColorBrush x:Key="HighlightBrush" Color="{DynamicResource HighlightColor}" options:Freeze="True" />
     <SolidColorBrush x:Key="AccentBaseColorBrush" Color="{DynamicResource AccentBaseColor}" options:Freeze="True" />
@@ -43,7 +37,6 @@
     <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.ThumbIndicatorCheckedBrush.Win10" Color="{DynamicResource IdealForegroundColor}" options:Freeze="True" />
 
     <!-- metro code-->
-    <SolidColorBrush x:Key="valami" Color="{DynamicResource AccentColor2}" />
     <SolidColorBrush x:Key="NormalBorderBrush" Color="{DynamicResource AccentColor2}" />
 
     <LinearGradientBrush x:Key="NormalSubBorderBackground" EndPoint="0,1">
@@ -119,7 +112,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Name="BaseBorder" BorderThickness="0" BorderBrush="{StaticResource NormalBorderBrush}">
-                        <Border Name="Border" BorderThickness="0" Background="{StaticResource NormalSubBorderBackground}" BorderBrush="{StaticResource NormalSubBorderBrush}">
+                        <Border Name="Border" BorderThickness="0" Background="{StaticResource NormalSubBorderBackground}" BorderBrush="{StaticResource WindowTitleColorBrush}">
                             <ContentPresenter Content="{TemplateBinding Content}" />
                         </Border>
                     </Border>
@@ -162,7 +155,7 @@
 
     <SolidColorBrush x:Key="CloseBorderBrush" Color="{DynamicResource AccentBaseColor2}" />
 
-    <SolidColorBrush x:Key="CloseFocusedBaseBorder" Color="{DynamicResource AccentColor2}" />
+    <SolidColorBrush x:Key="CloseFocusedBaseBorder" Color="{DynamicResource AccentColor3}" />
 
     <LinearGradientBrush x:Key="CloseUnfocusedBackgroundBrush" EndPoint="0,1">
         <GradientStop Color="{DynamicResource AccentBaseColor2}" Offset="0"/>
