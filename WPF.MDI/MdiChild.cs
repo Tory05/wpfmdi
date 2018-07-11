@@ -1051,6 +1051,7 @@ namespace WPF.MDI
 		{
 			if (Buttons != null)
 				Buttons.Children.Clear();
+            Unmaximize(); //needed, so that the next window in the container is not maximized
 			Container.Children.Remove(this);
 		}
 	}
