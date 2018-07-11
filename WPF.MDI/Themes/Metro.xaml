@@ -311,7 +311,7 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <Image Name="IconImage" Width="16" Height="16" Margin="2,6,0,0" Stretch="Fill" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="{TemplateBinding Icon}" Visibility="{TemplateBinding ShowIcon, Converter={StaticResource BoolToVisibility}}" />
+                                <Image Name="IconImage" Width="16" Height="16" Margin="2,6,0,0" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="{TemplateBinding Icon}" Visibility="{TemplateBinding ShowIcon, Converter={StaticResource BoolToVisibility}}" />
                                 <TextBlock Name="Header" Grid.Column="1" Margin="4,3,0,0" Typography.Capitals="AllSmallCaps" TextBlock.FontSize="17"  TextBlock.Foreground="White" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Text="{TemplateBinding Title}" />
                             </Grid>
 
