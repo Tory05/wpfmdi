@@ -466,11 +466,11 @@ namespace WPF.MDI
                 return;
             }
 
-            if (Content.IsKeyboardFocusWithin)
-            {
-                //Get the last element with active focus within the MdiChild
-                LastFocousedElement = Keyboard.FocusedElement;
-            }
+            //if (Content.IsKeyboardFocusWithin)
+            //{
+            //    //Get the last element with active focus within the MdiChild
+            //    LastFocousedElement = Keyboard.FocusedElement;
+            //}
             else if (!IsKeyboardFocusWithin && (Container.ActiveMdiChild.Name == Name))
             {
                 SetValue(IsActiveProperty, false);

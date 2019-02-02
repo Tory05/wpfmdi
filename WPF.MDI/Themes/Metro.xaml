@@ -288,7 +288,7 @@
                 <ControlTemplate TargetType="{x:Type local:MdiChild}">
                     <Border Name="BaseBorder" BorderThickness="1" Background="{StaticResource BackBorderBackgroundBrush}" BorderBrush="{StaticResource BackBorderBrush}">
                         <Border.Effect>
-                            <DropShadowEffect x:Name="BaseBorderShadow" Opacity="0.4" BlurRadius="25" Direction="-45" RenderingBias="Performance" ShadowDepth="4"/>
+                            <DropShadowEffect x:Name="BaseBorderShadow" Opacity="0.3" BlurRadius="25" Direction="-45" RenderingBias="Performance" ShadowDepth="2"/>
                         </Border.Effect>
                         <Grid>
 

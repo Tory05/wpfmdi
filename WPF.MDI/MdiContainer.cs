@@ -280,7 +280,7 @@ namespace WPF.MDI
         {
             if (ActiveMdiChild == null)
                 return;
-            ActiveMdiChild.Focused = true;
+            //ActiveMdiChild.Focused = true;
         }
 
         /// <summary>
