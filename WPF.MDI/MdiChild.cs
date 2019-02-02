@@ -13,12 +13,13 @@ namespace WPF.MDI
 	[ContentProperty("Content")]
 	public class MdiChild : Control
 	{
-		#region Constants
+        private IInputElement LastFocousedElement = null;
+        #region Constants
 
-		/// <summary>
-		/// Width of minimized window.
-		/// </summary>
-		internal const int MinimizedWidth = 160;
+        /// <summary>
+        /// Width of minimized window.
+        /// </summary>
+        internal const int MinimizedWidth = 160;
 
 		/// <summary>
 		/// Height of minimized window.
@@ -114,24 +115,23 @@ namespace WPF.MDI
 			DependencyProperty.Register("Position", typeof(Point), typeof(MdiChild),
 			new UIPropertyMetadata(new Point(-1, -1), new PropertyChangedCallback(PositionValueChanged)));
 
-		///// <summary>
-		///// Identifies the WPF.MDI.MdiChild.ButtonsProperty dependency property.
-		///// </summary>
-		///// <returns>The identifier for the WPF.MDI.MdiChild.ButtonsProperty property.</returns>
-		//public static readonly DependencyProperty ButtonsProperty =
-		//    DependencyProperty.Register("Buttons", typeof(Panel), typeof(MdiChild),
-		//    new UIPropertyMetadata(null));
+        /// <summary>
+        /// Identifies the WPF.MDI.MdiChild.IsActiveProperty dependency property.
+        /// </summary>
+        /// <returns>The identifier for the WPF.MDI.MdiChild.IsActiveProperty property.</returns>
+        public static readonly DependencyProperty IsActiveProperty =
+            DependencyProperty.Register("IsActive", typeof(bool), typeof(MdiChild));
 
 
-		#endregion
+        #endregion
 
-		#region Dependency Events
+        #region Dependency Events
 
-		/// <summary>
-		/// Identifies the WPF.MDI.MdiChild.ClosingEvent routed event.
-		/// </summary>
-		/// <returns>The identifier for the WPF.MDI.MdiChild.ClosingEvent routed event.</returns>
-		public static readonly RoutedEvent ClosingEvent =
+        /// <summary>
+        /// Identifies the WPF.MDI.MdiChild.ClosingEvent routed event.
+        /// </summary>
+        /// <returns>The identifier for the WPF.MDI.MdiChild.ClosingEvent routed event.</returns>
+        public static readonly RoutedEvent ClosingEvent =
 			EventManager.RegisterRoutedEvent("Closing", RoutingStrategy.Bubble, typeof(ClosingEventArgs), typeof(MdiChild));
 
 		/// <summary>
@@ -140,17 +140,29 @@ namespace WPF.MDI
 		/// <returns>The identifier for the WPF.MDI.MdiChild.ClosedEvent routed event.</returns>
 		public static readonly RoutedEvent ClosedEvent =
 			EventManager.RegisterRoutedEvent("Closed", RoutingStrategy.Bubble, typeof(RoutedEventArgs), typeof(MdiChild));
+        /// <summary>
+        /// Identifies the WPF.MDI.MdiChild.ActivatedEvent routed event.
+        /// </summary>
+        /// <returns>The identifier for the WPF.MDI.MdiChild.ActivatedEvent routed event.</returns>
+        public static readonly RoutedEvent ActivatedEvent =
+            EventManager.RegisterRoutedEvent("Activated", RoutingStrategy.Bubble, typeof(RoutedEventArgs), typeof(MdiChild));
 
-		#endregion
+        /// <summary>
+        /// Identifies the WPF.MDI.MdiChild.DeactivatedEvent routed event.
+        /// </summary>
+        /// <returns>The identifier for the WPF.MDI.MdiChild.DeactivatedEvent routed event.</returns>
+        public static readonly RoutedEvent DeactivatedEvent =
+            EventManager.RegisterRoutedEvent("Deactivated", RoutingStrategy.Bubble, typeof(RoutedEventArgs), typeof(MdiChild));
+        #endregion
 
-		#region Property Accessors
+        #region Property Accessors
 
-		/// <summary>
-		/// Gets or sets the content.
-		/// This is a dependency property.
-		/// </summary>
-		/// <value>The content.</value>
-		public UIElement Content
+        /// <summary>
+        /// Gets or sets the content.
+        /// This is a dependency property.
+        /// </summary>
+        /// <value>The content.</value>
+        public UIElement Content
 		{
 			get { return (UIElement)GetValue(ContentProperty); }
 			set { SetValue(ContentProperty, value); }
@@ -297,13 +309,24 @@ namespace WPF.MDI
 			remove { RemoveHandler(ClosedEvent, value); }
 		}
 
-		#endregion
+        public event RoutedEventHandler Activated
+        {
+            add { AddHandler(ActivatedEvent, value); }
+            remove { RemoveHandler(ActivatedEvent, value); }
+        }
 
-		#region Member Declarations
+        public event RoutedEventHandler Deactivated
+        {
+            add { AddHandler(DeactivatedEvent, value); }
+            remove { RemoveHandler(DeactivatedEvent, value); }
+        }
+        #endregion
 
-		#region Top Buttons
+        #region Member Declarations
 
-		private Button minimizeButton;
+        #region Top Buttons
+
+        private Button minimizeButton;
 
 		private Button maximizeButton;
 
@@ -334,14 +357,18 @@ namespace WPF.MDI
 		/// </summary>
 		WindowState NonMaximizedState { get; set; }
 
-		#endregion
-
-		#region Constructor
-
-		/// <summary>
-		/// Initializes the <see cref="MdiChild"/> class.
+        /// <summary>
+		/// Original minmum size of window in Minimized state.
 		/// </summary>
-		static MdiChild()
+		private Size originalMinimumSize = new Size();
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Initializes the <see cref="MdiChild"/> class.
+        /// </summary>
+        static MdiChild()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(MdiChild), new FrameworkPropertyMetadata(typeof(MdiChild)));
 		}
@@ -356,7 +383,8 @@ namespace WPF.MDI
 			Loaded += MdiChild_Loaded;
 			GotFocus += MdiChild_GotFocus;
 			KeyDown += MdiChild_KeyDown;
-		}
+            LostFocus += MdiChild_LostFocus;
+        }
 
 		static void MdiChild_KeyDown(object sender, KeyEventArgs e)
 		{
@@ -387,12 +415,27 @@ namespace WPF.MDI
 			FrameworkElement currentControl = this;
 
 			while (currentControl != null && currentControl.GetType() != typeof(MdiContainer))
-				currentControl = (FrameworkElement)currentControl.Parent;
+            {
+                currentControl = (FrameworkElement)currentControl.Parent;
+            }
 
-			if (currentControl != null)
-				Container = (MdiContainer)currentControl;
-			//else throw new Exception("Unable to find MdiContainer parent.");
-		}
+            if (currentControl != null)
+            {
+                Container = (MdiContainer)currentControl;
+            }
+            //Maintain the cycle of keyboard navigation within the active MdiChild
+            KeyboardNavigation.SetTabNavigation(this, KeyboardNavigationMode.Cycle);
+            KeyboardNavigation.SetControlTabNavigation(this, KeyboardNavigationMode.Cycle);
+            KeyboardNavigation.SetDirectionalNavigation(this, KeyboardNavigationMode.Cycle);
+
+            /* WPF manages the KeyDown only if it has at least one control with the Focus active,
+             * So set the focus on the first control within the MdiChild, to allow the KeyDown event
+             */
+            MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
+
+            //Stores reference to the control with the focus active, and then reactivates it when user return from another MdiChild
+            LastFocousedElement = Keyboard.FocusedElement;
+        }
 
 		/// <summary>
 		/// Handles the GotFocus event of the MdiChild control.
@@ -401,35 +444,72 @@ namespace WPF.MDI
 		/// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
 		private void MdiChild_GotFocus(object sender, RoutedEventArgs e)
 		{
-			Focus();
+            if (LastFocousedElement != null)
+            {
+                if (Keyboard.FocusedElement != LastFocousedElement && (Container.ActiveMdiChild.Name != Name))
+                {
+                    //When the user returns to this MdiChild from another MdiChild, set the focus to the last control used
+                    Keyboard.Focus(LastFocousedElement);
+                    Container.ActiveMdiChild = this;
+                    RaiseEvent(new RoutedEventArgs(ActivatedEvent));
+                    return;
+                }
+
+            }
+            Focus();
 		}
 
-		#endregion
+        private void MdiChild_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (Content == null)
+            {
+                return;
+            }
 
-		#region Control Overrides
+            if (Content.IsKeyboardFocusWithin)
+            {
+                //Get the last element with active focus within the MdiChild
+                LastFocousedElement = Keyboard.FocusedElement;
+            }
+            else if (!IsKeyboardFocusWithin && (Container.ActiveMdiChild.Name == Name))
+            {
+                SetValue(IsActiveProperty, false);
+                RaiseEvent(new RoutedEventArgs(DeactivatedEvent));
+            }
+        }
+        #endregion
 
-		/// <summary>
-		/// When overridden in a derived class, is invoked whenever application code or internal processes call <see cref="M:System.Windows.FrameworkElement.ApplyTemplate"/>.
-		/// </summary>
-		public override void OnApplyTemplate()
+        #region Control Overrides
+
+        /// <summary>
+        /// When overridden in a derived class, is invoked whenever application code or internal processes call <see cref="M:System.Windows.FrameworkElement.ApplyTemplate"/>.
+        /// </summary>
+        public override void OnApplyTemplate()
 		{
 			base.OnApplyTemplate();
+            
 
-			minimizeButton = (Button)Template.FindName("MinimizeButton", this);
+            minimizeButton = (Button)Template.FindName("MinimizeButton", this);
 			maximizeButton = (Button)Template.FindName("MaximizeButton", this);
 			closeButton = (Button)Template.FindName("CloseButton", this);
 			buttonsPanel = (StackPanel)Template.FindName("ButtonsPanel", this);
 
 			if (minimizeButton != null)
-				minimizeButton.Click += minimizeButton_Click;
+            {
+                minimizeButton.Click += minimizeButton_Click;
+            }
 
-			if (maximizeButton != null)
-				maximizeButton.Click += maximizeButton_Click;
+            if (maximizeButton != null)
+            {
+                maximizeButton.Click += maximizeButton_Click;
+            }
 
-			if (closeButton != null)
-				closeButton.Click += closeButton_Click;
+            if (closeButton != null)
+            {
+                closeButton.Click += closeButton_Click;
+            }
 
-			Thumb dragThumb = (Thumb)Template.FindName("DragThumb", this);
+            Thumb dragThumb = (Thumb)Template.FindName("DragThumb", this);
 
 			if (dragThumb != null)
 			{
@@ -439,10 +519,14 @@ namespace WPF.MDI
 				dragThumb.MouseDoubleClick += (sender, e) =>
 				{
 					if (WindowState == WindowState.Minimized)
-						minimizeButton_Click(null, null);
-					else if (WindowState == WindowState.Normal)
-						maximizeButton_Click(null, null);
-				};
+                    {
+                        minimizeButton_Click(null, null);
+                    }
+                    else if (WindowState == WindowState.Normal)
+                    {
+                        maximizeButton_Click(null, null);
+                    }
+                };
 			}
 
 			Thumb resizeLeft = (Thumb)Template.FindName("ResizeLeft", this);
@@ -546,22 +630,19 @@ namespace WPF.MDI
 			Focused = true;
 		}
 
-		#endregion
+        #endregion
 
-		#region Top Button Events
+        #region Top Button Events
 
-		/// <summary>
-		/// Handles the Click event of the minimizeButton control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-		private void minimizeButton_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Handles the Click event of the minimizeButton control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+        private void minimizeButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (WindowState == WindowState.Minimized)
-				WindowState = WindowState.Normal;
-			else
-				WindowState = WindowState.Minimized;
-		}
+			WindowState = WindowState == WindowState.Minimized ? WindowState.Normal : WindowState.Minimized;
+        }
 
 		/// <summary>
 		/// Handles the Click event of the maximizeButton control.
@@ -570,11 +651,8 @@ namespace WPF.MDI
 		/// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
 		private void maximizeButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (WindowState == WindowState.Maximized)
-				WindowState = WindowState.Normal;
-			else
-				WindowState = WindowState.Maximized;
-		}
+			WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        }
 
 		/// <summary>
 		/// Handles the Click event of the closeButton control.
@@ -587,71 +665,85 @@ namespace WPF.MDI
 			RaiseEvent(eventArgs);
 
 			if (eventArgs.Cancel)
-				return;
+                return;
 
-			Close();
+            Close();
 
 			RaiseEvent(new RoutedEventArgs(ClosedEvent));
 		}
 
-		#endregion
+        #endregion
 
-		#region Thumb Events
+        #region Thumb Events
 
-		/// <summary>
-		/// Handles the DragStarted event of the Thumb control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.Windows.Controls.Primitives.DragStartedEventArgs"/> instance containing the event data.</param>
-		private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
+        /// <summary>
+        /// Handles the DragStarted event of the Thumb control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="DragStartedEventArgs"/> instance containing the event data.</param>
+        private void Thumb_DragStarted(object sender, DragStartedEventArgs e)
 		{
 			if (!Focused)
-				Focused = true;
-		}
+            {
+                Focused = true;
+            }
+        }
 
-		/// <summary>
-		/// Handles the DragDelta event of the ResizeLeft control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.Windows.Controls.Primitives.DragDeltaEventArgs"/> instance containing the event data.</param>
-		private void ResizeLeft_DragDelta(object sender, DragDeltaEventArgs e)
+        /// <summary>
+        /// Handles the DragDelta event of the ResizeLeft control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="DragDeltaEventArgs"/> instance containing the event data.</param>
+        private void ResizeLeft_DragDelta(object sender, DragDeltaEventArgs e)
 		{
 			if (Width - e.HorizontalChange < MinWidth)
-				return;
+            {
+                return;
+            }
 
-			double newLeft = e.HorizontalChange;
+            double newLeft = e.HorizontalChange;
 
 			if (Position.X + newLeft < 0)
-				newLeft = 0 - Position.X;
+            {
+                newLeft = 0 - Position.X;
+            }
 
-			Width -= newLeft;
+            Width -= newLeft;
 			Position = new Point(Position.X + newLeft, Position.Y);
 
 			if (sender != null)
-				Container.InvalidateSize();
-		}
+            {
+                Container.InvalidateSize();
+            }
+        }
 
-		/// <summary>
-		/// Handles the DragDelta event of the ResizeTop control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.Windows.Controls.Primitives.DragDeltaEventArgs"/> instance containing the event data.</param>
-		private void ResizeTop_DragDelta(object sender, DragDeltaEventArgs e)
+        /// <summary>
+        /// Handles the DragDelta event of the ResizeTop control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="DragDeltaEventArgs"/> instance containing the event data.</param>
+        private void ResizeTop_DragDelta(object sender, DragDeltaEventArgs e)
 		{
 			if (Height - e.VerticalChange < MinHeight)
-				return;
+            {
+                return;
+            }
 
-			double newTop = e.VerticalChange;
+            double newTop = e.VerticalChange;
 
 			if (Position.Y + newTop < 0)
-				newTop = 0 - Position.Y;
+            {
+                newTop = 0 - Position.Y;
+            }
 
-			Height -= newTop;
+            Height -= newTop;
 			Position = new Point(Position.X, Position.Y + newTop);
 
 			if (sender != null)
-				Container.InvalidateSize();
-		}
+            {
+                Container.InvalidateSize();
+            }
+        }
 
 		/// <summary>
 		/// Handles the DragDelta event of the ResizeRight control.
@@ -661,29 +753,37 @@ namespace WPF.MDI
 		private void ResizeRight_DragDelta(object sender, DragDeltaEventArgs e)
 		{
 			if (Width + e.HorizontalChange < MinWidth)
-				return;
+            {
+                return;
+            }
 
-			Width += e.HorizontalChange;
+            Width += e.HorizontalChange;
 
 			if (sender != null)
-				Container.InvalidateSize();
-		}
+            {
+                Container.InvalidateSize();
+            }
+        }
 
-		/// <summary>
-		/// Handles the DragDelta event of the ResizeBottom control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.Windows.Controls.Primitives.DragDeltaEventArgs"/> instance containing the event data.</param>
-		private void ResizeBottom_DragDelta(object sender, DragDeltaEventArgs e)
+        /// <summary>
+        /// Handles the DragDelta event of the ResizeBottom control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="DragDeltaEventArgs"/> instance containing the event data.</param>
+        private void ResizeBottom_DragDelta(object sender, DragDeltaEventArgs e)
 		{
 			if (Height + e.VerticalChange < MinHeight)
-				return;
+            {
+                return;
+            }
 
-			Height += e.VerticalChange;
+            Height += e.VerticalChange;
 
 			if (sender != null)
-				Container.InvalidateSize();
-		}
+            {
+                Container.InvalidateSize();
+            }
+        }
 
 		#endregion
 
@@ -697,17 +797,24 @@ namespace WPF.MDI
 		private void dragThumb_DragDelta(object sender, DragDeltaEventArgs e)
 		{
 			if (WindowState == WindowState.Maximized)
-				return;
+            {
+                return;
+            }
 
-			double newLeft = Position.X + e.HorizontalChange,
+            double newLeft = Position.X + e.HorizontalChange,
 				newTop = Position.Y + e.VerticalChange;
 
 			if (newLeft < 0)
-				newLeft = 0;
-			if (newTop < 0)
-				newTop = 0;
+            {
+                newLeft = 0;
+            }
 
-			Position = new Point(newLeft, newTop);
+            if (newTop < 0)
+            {
+                newTop = 0;
+            }
+
+            Position = new Point(newLeft, newTop);
 
 			Container.InvalidateSize();
 		}
@@ -724,9 +831,11 @@ namespace WPF.MDI
 		private static void PositionValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
 		{
 			if ((Point)e.NewValue == (Point)e.OldValue)
-				return;
+            {
+                return;
+            }
 
-			MdiChild mdiChild = (MdiChild)sender;
+            MdiChild mdiChild = (MdiChild)sender;
 			Point newPosition = (Point)e.NewValue;
 
 			Canvas.SetTop(mdiChild, newPosition.Y < 0 ? 0 : newPosition.Y);
@@ -741,9 +850,11 @@ namespace WPF.MDI
 		private static void FocusedValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
 		{
 			if ((bool)e.NewValue == (bool)e.OldValue)
-				return;
+            {
+                return;
+            }
 
-			MdiChild mdiChild = (MdiChild)sender;
+            MdiChild mdiChild = (MdiChild)sender;
 			if ((bool)e.NewValue)
 			{
 				mdiChild.Dispatcher.BeginInvoke(new Func<IInputElement, IInputElement>(Keyboard.Focus), System.Windows.Threading.DispatcherPriority.ApplicationIdle, mdiChild.Content);
@@ -752,8 +863,11 @@ namespace WPF.MDI
 			else
 			{
 				if (mdiChild.WindowState == WindowState.Maximized)
-					mdiChild.Unmaximize();
-				mdiChild.RaiseEvent(new RoutedEventArgs(LostFocusEvent, mdiChild));
+                {
+                    mdiChild.Unmaximize();
+                }
+
+                mdiChild.RaiseEvent(new RoutedEventArgs(LostFocusEvent, mdiChild));
 			}
 		}
 
@@ -772,47 +886,63 @@ namespace WPF.MDI
 				bool maximizeVisible = true;
 
 				if (mdiChild.maximizeButton != null)
-					maximizeVisible = mdiChild.maximizeButton.Visibility == Visibility.Visible;
+                {
+                    maximizeVisible = mdiChild.maximizeButton.Visibility == Visibility.Visible;
+                }
 
-				if (mdiChild.minimizeButton != null)
-					mdiChild.minimizeButton.IsEnabled = true;
+                if (mdiChild.minimizeButton != null)
+                {
+                    mdiChild.minimizeButton.IsEnabled = true;
+                }
 
-				if (!maximizeVisible)
+                if (!maximizeVisible)
 				{
 					if (mdiChild.maximizeButton != null)
-						mdiChild.minimizeButton.Visibility = Visibility.Visible;
+                    {
+                        mdiChild.minimizeButton.Visibility = Visibility.Visible;
+                    }
 
-					if (mdiChild.maximizeButton != null)
-						mdiChild.maximizeButton.Visibility = Visibility.Visible;
-				}
+                    if (mdiChild.maximizeButton != null)
+                    {
+                        mdiChild.maximizeButton.Visibility = Visibility.Visible;
+                    }
+                }
 			}
 			else
 			{
 				bool maximizeEnabled = true;
 
 				if (mdiChild.maximizeButton != null)
-					maximizeEnabled = mdiChild.maximizeButton.IsEnabled;
+                {
+                    maximizeEnabled = mdiChild.maximizeButton.IsEnabled;
+                }
 
-				if (mdiChild.minimizeButton != null)
-					mdiChild.minimizeButton.IsEnabled = false;
+                if (mdiChild.minimizeButton != null)
+                {
+                    mdiChild.minimizeButton.IsEnabled = false;
+                }
 
-				if (!maximizeEnabled)
+                if (!maximizeEnabled)
 				{
 					if (mdiChild.minimizeButton != null)
-						mdiChild.minimizeButton.Visibility = Visibility.Hidden;
+                    {
+                        mdiChild.minimizeButton.Visibility = Visibility.Hidden;
+                    }
 
-					if (mdiChild.maximizeButton != null)
-						mdiChild.maximizeButton.Visibility = Visibility.Hidden;
-				}
+                    if (mdiChild.maximizeButton != null)
+                    {
+                        mdiChild.maximizeButton.Visibility = Visibility.Hidden;
+                    }
+                }
 			}
 		}
 
-		/// <summary>
-		/// Dependency property event once the maximize box value has changed.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-		private static void MaximizeBoxValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        /// <summary>
+        /// Dependency property event once the maximize box value has changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void MaximizeBoxValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
 		{
 			MdiChild mdiChild = (MdiChild)sender;
 			bool visible = (bool)e.NewValue;
@@ -822,38 +952,54 @@ namespace WPF.MDI
 				bool minimizeVisible = true;
 
 				if (mdiChild.minimizeButton != null)
-					minimizeVisible = mdiChild.minimizeButton.Visibility == Visibility.Visible;
+                {
+                    minimizeVisible = mdiChild.minimizeButton.Visibility == Visibility.Visible;
+                }
 
-				if (mdiChild.maximizeButton != null)
-					mdiChild.maximizeButton.IsEnabled = true;
+                if (mdiChild.maximizeButton != null)
+                {
+                    mdiChild.maximizeButton.IsEnabled = true;
+                }
 
-				if (!minimizeVisible)
+                if (!minimizeVisible)
 				{
 					if (mdiChild.maximizeButton != null)
-						mdiChild.minimizeButton.Visibility = Visibility.Visible;
+                    {
+                        mdiChild.minimizeButton.Visibility = Visibility.Visible;
+                    }
 
-					if (mdiChild.maximizeButton != null)
-						mdiChild.maximizeButton.Visibility = Visibility.Visible;
-				}
+                    if (mdiChild.maximizeButton != null)
+                    {
+                        mdiChild.maximizeButton.Visibility = Visibility.Visible;
+                    }
+                }
 			}
 			else
 			{
 				bool minimizeEnabled = true;
 
 				if (mdiChild.minimizeButton != null)
-					minimizeEnabled = mdiChild.minimizeButton.IsEnabled;
+                {
+                    minimizeEnabled = mdiChild.minimizeButton.IsEnabled;
+                }
 
-				if (mdiChild.maximizeButton != null)
-					mdiChild.maximizeButton.IsEnabled = false;
+                if (mdiChild.maximizeButton != null)
+                {
+                    mdiChild.maximizeButton.IsEnabled = false;
+                }
 
-				if (!minimizeEnabled)
+                if (!minimizeEnabled)
 				{
 					if (mdiChild.maximizeButton != null)
-						mdiChild.minimizeButton.Visibility = Visibility.Hidden;
+                    {
+                        mdiChild.minimizeButton.Visibility = Visibility.Hidden;
+                    }
 
-					if (mdiChild.maximizeButton != null)
-						mdiChild.maximizeButton.Visibility = Visibility.Hidden;
-				}
+                    if (mdiChild.maximizeButton != null)
+                    {
+                        mdiChild.maximizeButton.Visibility = Visibility.Hidden;
+                    }
+                }
 			}
 		}
 
@@ -870,21 +1016,25 @@ namespace WPF.MDI
             if (visible)
             {
                 if ((mdiChild.closeButton != null) && (mdiChild.closeButton.Visibility != Visibility.Visible))
-                        mdiChild.closeButton.Visibility = Visibility.Visible;
+                {
+                    mdiChild.closeButton.Visibility = Visibility.Visible;
+                }
             }
             else
             {
                 if ((mdiChild.closeButton != null) && (mdiChild.closeButton.Visibility == Visibility.Visible))
+                {
                     mdiChild.closeButton.Visibility = Visibility.Collapsed;
+                }
             }
         }
 
-		/// <summary>
-		/// Dependency property event once the windows state value has changed.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-		private static void WindowStateValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        /// <summary>
+        /// Dependency property event once the windows state value has changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void WindowStateValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
 		{
 			MdiChild mdiChild = (MdiChild)sender;
 			MdiContainer mdiContainer = mdiChild.Container;
@@ -892,21 +1042,22 @@ namespace WPF.MDI
 			WindowState previousWindowState = (WindowState)e.OldValue;
 			WindowState windowState = (WindowState)e.NewValue;
 
-			if (mdiChild.Container == null ||
-				previousWindowState == windowState)
-				return;
+			if (mdiChild.Container == null || previousWindowState == windowState)
+            {
+                return;
+            }
 
-			if (previousWindowState == WindowState.Maximized)
+            if (previousWindowState == WindowState.Maximized)
 			{
-				if (mdiContainer.ActiveMdiChild.WindowState != WindowState.Maximized)
+				if (mdiContainer.ActiveMdiChild != null && mdiContainer.ActiveMdiChild.WindowState != WindowState.Maximized)
 				{
 					for (int i = 0; i < mdiContainer.Children.Count; i++)
 					{
-						if (mdiContainer.Children[i] != mdiChild &&
-								mdiContainer.Children[i].WindowState == WindowState.Maximized &&
-								mdiContainer.Children[i].MaximizeBox)
-							mdiContainer.Children[i].WindowState = WindowState.Normal;
-					}
+						if (mdiContainer.Children[i] != mdiChild &&	mdiContainer.Children[i].WindowState == WindowState.Maximized && mdiContainer.Children[i].MaximizeBox)
+                        {
+                            mdiContainer.Children[i].WindowState = WindowState.Normal;
+                        }
+                    }
 
 					ScrollViewer sv = (ScrollViewer)((Grid)mdiContainer.Content).Children[1];
 					sv.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
@@ -921,9 +1072,13 @@ namespace WPF.MDI
 			}
 
 			if (previousWindowState == WindowState.Minimized)
-				mdiChild.minimizedPosition = mdiChild.Position;
+            {
+                mdiChild.minimizedPosition = mdiChild.Position;
+                mdiChild.MinWidth = mdiChild.originalMinimumSize.Width;
+                mdiChild.MinHeight = mdiChild.originalMinimumSize.Height;
+            }
 
-			switch (windowState)
+            switch (windowState)
 			{
 				case WindowState.Normal:
 					{
@@ -935,9 +1090,15 @@ namespace WPF.MDI
 				case WindowState.Minimized:
 					{
 						if (previousWindowState == WindowState.Normal)
-							mdiChild.originalDimension = new Rect(mdiChild.Position.X, mdiChild.Position.Y, mdiChild.ActualWidth, mdiChild.ActualHeight);
+                        {
+                            mdiChild.originalDimension = new Rect(mdiChild.Position.X, mdiChild.Position.Y, mdiChild.ActualWidth, mdiChild.ActualHeight);
+                        }
 
-						double newLeft, newTop;
+                        mdiChild.originalMinimumSize = new Size(mdiChild.MinWidth, mdiChild.MinHeight);
+                        mdiChild.MinWidth = 0;
+                        mdiChild.MinHeight = 0;
+
+                        double newLeft, newTop;
 						if (mdiChild.minimizedPosition.X >= 0 || mdiChild.minimizedPosition.Y >= 0)
 						{
 							newLeft = mdiChild.minimizedPosition.X;
@@ -949,22 +1110,23 @@ namespace WPF.MDI
 							for (int i = 0; i < mdiContainer.Children.Count; i++)
 							{
 								MdiChild child = mdiContainer.Children[i];
-								if (child != mdiChild &&
-									child.WindowState == WindowState.Minimized)
-									minimizedWindows.Add(new Rect(child.Position.X, mdiContainer.InnerHeight - child.Position.Y, child.Width, child.Height));
-							}
+								if (child != mdiChild && child.WindowState == WindowState.Minimized)
+                                {
+                                    minimizedWindows.Add(new Rect(child.Position.X, mdiContainer.InnerHeight - child.Position.Y, child.Width, child.Height));
+                                }
+                            }
 							Rect newWindowPlace;
 							bool occupied = true;
 							int count = 0,
-								capacity = Convert.ToInt32(mdiContainer.ActualWidth) / MdiChild.MinimizedWidth;
+								capacity = Convert.ToInt32(mdiContainer.ActualWidth) / MinimizedWidth;
 							do
 							{
 								int row = count / capacity + 1,
 									col = count % capacity;
-								newTop = MdiChild.MinimizedHeight * row;
-								newLeft = MdiChild.MinimizedWidth * col;
+								newTop = MinimizedHeight * row;
+								newLeft = MinimizedWidth * col;
 
-								newWindowPlace = new Rect(newLeft, newTop, MdiChild.MinimizedWidth, MdiChild.MinimizedHeight);
+								newWindowPlace = new Rect(newLeft, newTop, MinimizedWidth, MinimizedHeight);
 								occupied = false;
 								foreach (Rect rect in minimizedWindows)
 								{
@@ -993,15 +1155,18 @@ namespace WPF.MDI
 
 						mdiChild.Position = new Point(newLeft, newTop);
 
-						mdiChild.Width = MdiChild.MinimizedWidth;
-						mdiChild.Height = MdiChild.MinimizedHeight;
+						mdiChild.Width = MinimizedWidth;
+						mdiChild.Height = MinimizedHeight;
 					}
 					break;
 				case WindowState.Maximized:
 					{
 						if (previousWindowState == WindowState.Normal)
-							mdiChild.originalDimension = new Rect(mdiChild.Position.X, mdiChild.Position.Y, mdiChild.ActualWidth, mdiChild.ActualHeight);
-						mdiChild.NonMaximizedState = previousWindowState;
+                        {
+                            mdiChild.originalDimension = new Rect(mdiChild.Position.X, mdiChild.Position.Y, mdiChild.ActualWidth, mdiChild.ActualHeight);
+                        }
+
+                        mdiChild.NonMaximizedState = previousWindowState;
 
 						mdiChild.buttonsPanel.Children.Clear();
 						StackPanel sp = new StackPanel { Orientation = Orientation.Horizontal };
@@ -1012,7 +1177,7 @@ namespace WPF.MDI
 
 						mdiChild.Position = new Point(0, 0);
 						mdiChild.Width = mdiContainer.ActualWidth;
-						mdiChild.Height = mdiContainer.InnerHeight - 2; // ContentBorder.BorderThickness="1" in template
+						mdiChild.Height = mdiContainer.InnerHeight;
 
 						ScrollViewer sv = (ScrollViewer)((Grid)mdiContainer.Content).Children[1];
 						sv.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;
@@ -1021,8 +1186,11 @@ namespace WPF.MDI
 					break;
 			}
 			if (mdiContainer.ActiveMdiChild == mdiChild)
-				mdiContainer.Buttons = mdiChild.Buttons;
-			mdiContainer.InvalidateSize();
+            {
+                mdiContainer.Buttons = mdiChild.Buttons;
+            }
+
+            mdiContainer.InvalidateSize();
 		}
 		
 		#endregion
@@ -1032,7 +1200,8 @@ namespace WPF.MDI
 		/// </summary>
 		public new void Focus()
 		{
-			Container.ActiveMdiChild = this;
+            SetValue(IsActiveProperty, true);
+            Container.ActiveMdiChild = this;
 		}
 
 		/// <summary>
@@ -1041,8 +1210,10 @@ namespace WPF.MDI
 		internal void Unmaximize()
 		{
 			if (WindowState == WindowState.Maximized)
-				WindowState = NonMaximizedState;
-		}
+            {
+                WindowState = NonMaximizedState;
+            }
+        }
 
 		/// <summary>
 		/// Manually closes the child window.
@@ -1050,7 +1221,10 @@ namespace WPF.MDI
 		public void Close()
 		{
 			if (Buttons != null)
-				Buttons.Children.Clear();
+            {
+                Buttons.Children.Clear();
+            }
+
             Unmaximize(); //needed, so that the next window in the container is not maximized
 			Container.Children.Remove(this);
 		}

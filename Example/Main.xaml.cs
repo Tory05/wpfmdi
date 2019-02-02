@@ -28,15 +28,16 @@ namespace Example
 				Title = "Empty Window Using Code",
 				Icon = new BitmapImage(new Uri("OriginalLogo.png", UriKind.Relative))
 			});
+            MdiChild mdi = new MdiChild
+            {
+                Title = "Window Using Code",
+                Width = 714,
+                Height = 734,
+                Position = new Point(300, 80)
+            };
+            mdi.Content = new ExampleControl(mdi);
 
-			Container.Children.Add(new MdiChild
-			{
-				Title = "Window Using Code",
-				Content = new ExampleControl(),
-				Width = 714,
-				Height = 734,
-				Position = new Point(300, 80)
-			});
+            Container.Children.Add(mdi);
 		}
 
 		#region Mdi-like title

@@ -106,7 +106,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border Name="BaseBorder" BorderThickness="0" BorderBrush="{StaticResource NormalBorderBrush}">
+                    <Border FocusVisualStyle="{x:Null}" Name="BaseBorder" BorderThickness="0" BorderBrush="{StaticResource NormalBorderBrush}">
                         <Border Name="Border" BorderThickness="0" Background="{StaticResource NormalSubBorderBackground}" BorderBrush="{StaticResource WindowTitleColorBrush}">
                             <ContentPresenter Content="{TemplateBinding Content}" />
                         </Border>
@@ -265,14 +265,14 @@
 
     <SolidColorBrush x:Key="ChildBackground" Color="{DynamicResource IdealForegroundColor}" />
 
-    <BitmapImage x:Key="RestoreImage" UriSource="/WPF.MDI;component/Themes/Aero/Restore.png" />
+    <BitmapImage x:Key="RestoreImage" UriSource="/WPF.MDI;component/Themes/Metro/Restore.png" />
 
     <SolidColorBrush x:Key="BackBorderMaximizedBrush" Color="#FF4A5764" />
 
     <SolidColorBrush x:Key="ContentMaximizedBorderBrush" Color="#FFA0A0A0" />
 
     <BitmapImage x:Key="MaximizedMinimizeImage" UriSource="/WPF.MDI;component/Themes/Aero/MaximizedMinimize.png" />
-    <BitmapImage x:Key="MaximizedRestoreImage" UriSource="/WPF.MDI;component/Themes/Aero/MaximizedRestore.png" />
+    <BitmapImage x:Key="MaximizedRestoreImage" UriSource="/WPF.MDI;component/Themes/Metro/MaximizedRestore.png" />
     <BitmapImage x:Key="MaximizedCloseImage" UriSource="/WPF.MDI;component/Themes/Aero/MaximizedClose.png" />
 
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
@@ -287,6 +287,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:MdiChild}">
                     <Border Name="BaseBorder" BorderThickness="1" Background="{StaticResource BackBorderBackgroundBrush}" BorderBrush="{StaticResource BackBorderBrush}">
+                        <Border.Effect>
+                            <DropShadowEffect x:Name="BaseBorderShadow" Opacity="0.4" BlurRadius="25" Direction="-45" RenderingBias="Performance" ShadowDepth="4"/>
+                        </Border.Effect>
                         <Grid>
 
 

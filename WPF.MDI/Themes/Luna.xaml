@@ -144,7 +144,7 @@
                             <TextBlock Name="Header" Grid.Column="1" Margin="4,9,0,0" Foreground="White" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Text="{TemplateBinding Title}" />
                         </Grid>
 
-                        <Border Name="ContentHost" Margin="5,29,5,5" Background="{TemplateBinding Background}">
+                        <Border Name="ContentHost" FocusVisualStyle="{x:Null}" Margin="5,29,5,5" Background="{TemplateBinding Background}">
                             <ContentControl Content="{TemplateBinding Content}" />
                         </Border>
 

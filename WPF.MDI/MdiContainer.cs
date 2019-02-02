@@ -53,7 +53,7 @@ namespace WPF.MDI
 		/// <returns>The identifier for the WPF.MDI.MdiContainer.MdiLayout property.</returns>
 		public static readonly DependencyProperty MdiLayoutProperty =
 			DependencyProperty.Register("MdiLayout", typeof(MdiLayout), typeof(MdiContainer),
-			new UIPropertyMetadata(MdiLayout.ArrangeIcons, new PropertyChangedCallback(MdiLayoutValueChanged)));
+			new UIPropertyMetadata(MdiLayout.ArrangeIcons, null, new CoerceValueCallback(MdiLayoutValueChanged)));
 
 		/// <summary>
 		/// Identifies the WPF.MDI.MdiContainer.ActiveMdiChild dependency property.
@@ -201,10 +201,12 @@ namespace WPF.MDI
 			gr.Children.Add(_topPanel);
 
 			ScrollViewer sv = new ScrollViewer {
-				Content = _windowCanvas = new Canvas(),
+				Content = _windowCanvas = new Canvas() { UseLayoutRounding = true },
 				HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-				VerticalScrollBarVisibility = ScrollBarVisibility.Auto
-			};
+				VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                IsTabStop = false,
+                Focusable = false 
+            };
 			gr.Children.Add(sv);
 			Grid.SetRow(sv, 1);
 			Content = gr;
@@ -216,10 +218,10 @@ namespace WPF.MDI
 
 			Loaded += MdiContainer_Loaded;
 			SizeChanged += MdiContainer_SizeChanged;
-			KeyDown += new System.Windows.Input.KeyEventHandler(MdiContainer_KeyDown);
+			KeyDown += new KeyEventHandler(MdiContainer_KeyDown);
 		}
 
-		static void MdiContainer_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		static void MdiContainer_KeyDown(object sender, KeyEventArgs e)
 		{
 			MdiContainer mdiContainer = (MdiContainer)sender;
 			if (mdiContainer.Children.Count < 2)
@@ -311,7 +313,7 @@ namespace WPF.MDI
 				if (mdiChild.WindowState == WindowState.Maximized)
 				{
 					mdiChild.Width = ActualWidth;
-					mdiChild.Height = ActualHeight;
+					mdiChild.Height = InnerHeight;
 				}
 				if (mdiChild.WindowState == WindowState.Minimized)
 				{
@@ -337,21 +339,43 @@ namespace WPF.MDI
 					{
 						MdiChild mdiChild = Children[e.NewStartingIndex],
 							topChild = ActiveMdiChild;
+                        bool createMaximize = false;
+                        if (mdiChild.WindowState == WindowState.Maximized)
+                        {
+                            mdiChild.WindowState = WindowState.Normal;
+                            createMaximize = true;
+                        }
+                        if ((topChild != null && topChild.WindowState == WindowState.Maximized) || createMaximize)
+                        {
+                            mdiChild.Loaded += (s, a) =>
+                            {
+                                ActiveMdiChild = mdiChild;
+                                mdiChild.WindowState = WindowState.Maximized;
+                            };
+                        }
+                        else
+                        {
+                            mdiChild.Loaded += (s, a) => ActiveMdiChild = mdiChild;
+                        }
 
-						if (topChild != null && topChild.WindowState == WindowState.Maximized)
-							mdiChild.Loaded += (s, a) => mdiChild.WindowState = WindowState.Maximized;
-						mdiChild.Loaded += (s, a) => ActiveMdiChild = mdiChild;
+                        if (mdiChild.Position.X < 0 || mdiChild.Position.Y < 0)
+                        {
+                            mdiChild.Position = new Point(_windowOffset, _windowOffset);
+                        }
 
-						if (mdiChild.Position.X < 0 || mdiChild.Position.Y < 0)
-							mdiChild.Position = new Point(_windowOffset, _windowOffset);
-						_windowCanvas.Children.Add(mdiChild);
+                        _windowCanvas.Children.Add(mdiChild);
 
 						_windowOffset += WindowOffset;
 						if (_windowOffset + mdiChild.Width > ActualWidth)
-							_windowOffset = 0;
-						if (_windowOffset + mdiChild.Height > ActualHeight)
-							_windowOffset = 0;
-					}
+                        {
+                            _windowOffset = 0;
+                        }
+
+                        if (_windowOffset + mdiChild.Height > ActualHeight)
+                        {
+                            _windowOffset = 0;
+                        }
+                    }
 					break;
 				case NotifyCollectionChangedAction.Remove:
 					{
@@ -361,12 +385,15 @@ namespace WPF.MDI
 
 						ActiveMdiChild = newChild;
 						if (newChild != null && oldChild.WindowState == WindowState.Maximized)
-							newChild.WindowState = WindowState.Maximized;
-					}
+                        {
+                            newChild.WindowState = WindowState.Maximized;
+                        }
+                    }
 					break;
 				case NotifyCollectionChangedAction.Reset:
 					_windowCanvas.Children.Clear();
-					break;
+                    ActiveMdiChild = null;
+                    break;
 			}
 			InvalidateSize();
 		}
@@ -477,14 +504,14 @@ namespace WPF.MDI
 		/// </summary>
 		/// <param name="sender">The sender.</param>
 		/// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-		private static void MdiLayoutValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+		private static object MdiLayoutValueChanged(DependencyObject sender, object baseValue)
 		{
 			MdiContainer mdiContainer = (MdiContainer)sender;
-			MdiLayout value = (MdiLayout)e.NewValue;
+            MdiLayout value = (MdiLayout)baseValue;
 
-			if (value == MdiLayout.ArrangeIcons ||
+            if (value == MdiLayout.ArrangeIcons ||
 				mdiContainer.Children.Count < 1)
-				return;
+				return value;
 
 			// 1. WindowState.Maximized -> WindowState.Normal
 			List<MdiChild> minimizedWindows = new List<MdiChild>(),
@@ -518,54 +545,68 @@ namespace WPF.MDI
 				containerHeight = mdiContainer.InnerHeight - MdiChild.MinimizedHeight * row;
 				double newLeft = MdiChild.MinimizedWidth * col;
 				mdiChild.Position = new Point(newLeft, containerHeight);
-			}
+                if (normalWindows.Count == 0)
+                {
+                    return value;
+                }
+            }
 
 			// 3. Resize & arrange normal windows
 			switch (value)
 			{
 				case MdiLayout.Cascade:
 					{
-						double newWidth = mdiContainer.ActualWidth * 0.58, // should be non-linear formula here
-							newHeight = containerHeight * 0.67,
-							windowOffset = 0;
-						foreach (MdiChild mdiChild in normalWindows)
+                        double newWidth = mdiContainer.ActualWidth - (mdiContainer.ActualWidth * 0.20); //Width - 20%
+                        double newHeight = containerHeight - (containerHeight * 0.30); //Height - 30%
+                        double CurrentWindowOffset = 0;
+
+                        foreach (MdiChild mdiChild in normalWindows)
 						{
 							if (mdiChild.Resizable)
 							{
 								mdiChild.Width = newWidth;
 								mdiChild.Height = newHeight;
 							}
-							mdiChild.Position = new Point(windowOffset, windowOffset);
+							mdiChild.Position = new Point(CurrentWindowOffset, CurrentWindowOffset);
 
-							windowOffset += WindowOffset;
-							if (windowOffset + mdiChild.Width > mdiContainer.ActualWidth)
-								windowOffset = 0;
-							if (windowOffset + mdiChild.Height > containerHeight)
-								windowOffset = 0;
-						}
+                            CurrentWindowOffset += WindowOffset;
+                            if (CurrentWindowOffset + mdiChild.Width > mdiContainer.ActualWidth)
+                            {
+                                CurrentWindowOffset = 0;
+                            }
+
+                            if (CurrentWindowOffset + mdiChild.Height > containerHeight)
+                            {
+                                CurrentWindowOffset = 0;
+                            }
+                        }
 					}
 					break;
 				case MdiLayout.TileHorizontal:
 					{
-						int cols = (int)Math.Sqrt(normalWindows.Count),
+                        double cols = (int)Math.Sqrt(normalWindows.Count),
 							rows = normalWindows.Count / cols;
 
-						List<int> col_count = new List<int>(); // windows per column
+						List<double> col_count = new List<double>(); // windows per column
 						for (int i = 0; i < cols; i++)
 						{
 							if (normalWindows.Count % cols > cols - i - 1)
-								col_count.Add(rows + 1);
-							else
-								col_count.Add(rows);
-						}
+                            {
+                                col_count.Add(rows + 1);
+                            }
+                            else
+                            {
+                                col_count.Add(rows);
+                            }
+                        }
 
 						double newWidth = mdiContainer.ActualWidth / cols,
 							newHeight = containerHeight / col_count[0],
 							offsetTop = 0,
 							offsetLeft = 0;
-
-						for (int i = 0, col_index = 0, prev_count = 0; i < normalWindows.Count; i++)
-						{
+                        double prev_count = 0;
+                        for (int i = 0, col_index = 0; i < normalWindows.Count; i++)
+                        {
 							if (i >= prev_count + col_count[col_index])
 							{
 								prev_count += col_count[col_index++];
@@ -587,25 +628,29 @@ namespace WPF.MDI
 					break;
 				case MdiLayout.TileVertical:
 					{
-						int rows = (int)Math.Sqrt(normalWindows.Count),
+                        double rows = Math.Sqrt(normalWindows.Count),
 							cols = normalWindows.Count / rows;
 
-						List<int> col_count = new List<int>(); // windows per column
+						List<double> col_count = new List<double>(); // windows per column
 						for (int i = 0; i < cols; i++)
 						{
 							if (normalWindows.Count % cols > cols - i - 1)
-								col_count.Add(rows + 1);
-							else
-								col_count.Add(rows);
-						}
+                            {
+                                col_count.Add(rows + 1);
+                            }
+                            else
+                            {
+                                col_count.Add(rows);
+                            }
+                        }
 
 						double newWidth = mdiContainer.ActualWidth / cols,
 							newHeight = containerHeight / col_count[0],
 							offsetTop = 0,
 							offsetLeft = 0;
-
-						for (int i = 0, col_index = 0, prev_count = 0; i < normalWindows.Count; i++)
-						{
+                        double prev_count = 0;
+                        for (int i = 0, col_index = 0; i < normalWindows.Count; i++)
+                        {
 							if (i >= prev_count + col_count[col_index])
 							{
 								prev_count += col_count[col_index++];
@@ -626,60 +671,69 @@ namespace WPF.MDI
 					}
 					break;
 			}
-			mdiContainer.InvalidateSize();
-			mdiContainer.MdiLayout = MdiLayout.ArrangeIcons;
-		}
+            mdiContainer.UpdateScrollInfo();
+            return value;
+        }
 
-		/// <summary>
-		/// Dependency property event once the focused mdi child has changed.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-		private static void ActiveMdiChildValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        /// <summary>
+        /// Dependency property event once the focused mdi child has changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void ActiveMdiChildValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
 		{
 			MdiContainer mdiContainer = (MdiContainer)sender;
 			MdiChild newChild = (MdiChild)e.NewValue,
 				oldChild = (MdiChild)e.OldValue;
 
-			if (newChild == null || newChild == oldChild)
-				return;
+			if (newChild == oldChild)
+            {
+                return;
+            }
+            if (newChild != null)
+            {
+                if (oldChild != null && oldChild.WindowState == WindowState.Maximized)
+                {
+                    newChild.WindowState = WindowState.Maximized;
+                }
+                int maxZindex = 0;
+                for (int i = 0; i < mdiContainer.Children.Count; i++)
+                {
+                    int zindex = Panel.GetZIndex(mdiContainer.Children[i]);
+                    if (zindex > maxZindex)
+                    {
+                        maxZindex = zindex;
+                    }
 
-			if (oldChild != null &&  oldChild.WindowState == WindowState.Maximized)
-				newChild.WindowState = WindowState.Maximized;
+                    if (mdiContainer.Children[i] != newChild)
+                    {
+                        mdiContainer.Children[i].Focused = false;
+                    }
+                    else
+                    {
+                        newChild.Focused = true;
+                    }
+                }
 
-			int maxZindex = 0;
-			for (int i = 0; i < mdiContainer.Children.Count; i++)
-			{
-				int zindex = Panel.GetZIndex(mdiContainer.Children[i]);
-				if (zindex > maxZindex)
-					maxZindex = zindex;
-				if (mdiContainer.Children[i] != newChild)
-					mdiContainer.Children[i].Focused = false;
-				else
-					newChild.Focused = true;
-			}
+                Panel.SetZIndex(newChild, maxZindex + 1);
+            }
+            mdiContainer.MdiChildTitleChanged?.Invoke(mdiContainer, new RoutedEventArgs());
+        }
 
-			Panel.SetZIndex(newChild, maxZindex + 1);
-
-			if (mdiContainer.MdiChildTitleChanged != null)
-				mdiContainer.MdiChildTitleChanged(mdiContainer, new RoutedEventArgs());
-		}
-
-		/// <summary>
-		/// Dependency property event once the MdiChild's Buttons property has changed.
-		/// </summary>
-		/// <param name="sender">The sender.</param>
-		/// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-		private static void ButtonsValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        /// <summary>
+        /// Dependency property event once the MdiChild's Buttons property has changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void ButtonsValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
 		{
 			MdiContainer mdiContainer = (MdiContainer)sender;
 			Panel panel = (Panel)e.NewValue;
 
 			mdiContainer._buttons.Child = panel;
 
-            if (mdiContainer.MdiChildTitleChanged != null)
-                mdiContainer.MdiChildTitleChanged(mdiContainer, new RoutedEventArgs());
-		}
+            mdiContainer.MdiChildTitleChanged?.Invoke(mdiContainer, new RoutedEventArgs());
+        }
 
 		#endregion
 
@@ -691,8 +745,8 @@ namespace WPF.MDI
 
 			public int Compare(MdiChild x, MdiChild y)
 			{
-				return -1 * Canvas.GetZIndex(x).CompareTo(Canvas.GetZIndex(y));
-			}
+                return 1 * Panel.GetZIndex(x).CompareTo(Panel.GetZIndex(y));
+            }
 
 			#endregion
 		}
@@ -703,5 +757,15 @@ namespace WPF.MDI
 		/// Occurs when a multiple-document interface (MDI) child form is activated or closed within an MDI application.
 		/// </summary>
 		public event RoutedEventHandler MdiChildTitleChanged;
-	}
+        public void UpdateScrollInfo()
+        {
+            var c = _windowCanvas;
+            var sv = (ScrollViewer)c.Parent;
+
+            c.Width = 0;
+            c.Height = 0;
+            sv.UpdateLayout();
+            InvalidateSize();
+        }
+    }
 }

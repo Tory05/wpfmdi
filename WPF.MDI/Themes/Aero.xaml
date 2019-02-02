@@ -346,7 +346,7 @@
                                 <TextBlock Name="Header" Grid.Column="1" Margin="4,9,0,0" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Text="{TemplateBinding Title}" />
                             </Grid>
 
-                            <Border Name="ContentBorder" Margin="6,30,6,6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <Border Name="ContentBorder" FocusVisualStyle="{x:Null}" Margin="6,30,6,6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
                                 <ContentControl Content="{TemplateBinding Content}" />
                             </Border>
 
