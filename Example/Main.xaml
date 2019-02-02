@@ -4,7 +4,7 @@
     xmlns:mdi="clr-namespace:WPF.MDI;assembly=WPF.MDI"
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-    Title="WPF.MDI Example" Height="362" Width="684"  WindowState="Maximized">
+    Title="WPF.MDI Example" Height="362" Width="684"  WindowState="Maximized" Loaded="MetroWindow_Loaded">
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Click="ChangeAppStyleButtonClick">
@@ -15,7 +15,8 @@
             </Button>
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
-    <DockPanel>
+    <Grid>
+    <DockPanel Margin="0,0,0,20">
         <mdi:MdiContainer Name="Container">
             <mdi:MdiContainer.Menu>
                 <Menu DockPanel.Dock="Top">
@@ -33,8 +34,8 @@
                     <MenuItem Header="Windows" x:Name="WindowsMenu" x:FieldModifier="private" />
                 </Menu>
             </mdi:MdiContainer.Menu>
-            <mdi:MdiChild Title="Empty Window Using XAML" />
-            <mdi:MdiChild Name="Window1" Title="Window Using XAML" Position="20,15" Icon="OriginalLogo.png">
+                <mdi:MdiChild Title="Empty Window Using XAML" Activated="Window_Activated" Deactivated="Window_Deactivated"/>
+            <mdi:MdiChild Name="Window1" Title="Window Using XAML" Position="20,15" Icon="OriginalLogo.png" Activated="Window_Activated" Deactivated="Window_Deactivated">
                 <StackPanel>
                     <Button Name="DisableMinimize" Height="20" Click="DisableMinimize_Click">Disable Minimize</Button>
                     <Button Name="EnableMinimize" Height="20" Click="EnableMinimize_Click">Enable Minimize</Button>
@@ -48,4 +49,35 @@
             </mdi:MdiChild>
         </mdi:MdiContainer>
     </DockPanel>
+        <StatusBar Height="23"  VerticalAlignment="Bottom" Margin="0,0,0,0">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="4*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem>
+                <TextBlock x:Name="activetxt" Foreground="Black"/>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1">
+                <Controls:MetroProgressBar x:Name="somethingloader" Value="30" Width="80" Height="17" Foreground="WhiteSmoke" IsIndeterminate="True"/>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="2">
+                <TextBlock x:Name="somethingtxt" Text="Loading some things..." Foreground="Black" />
+            </StatusBarItem>
+            <StatusBarItem HorizontalContentAlignment="Right" Grid.Column="3">
+                <TextBlock x:Name="verstxt" Foreground="Black" Text="1.2.0.0"/>
+            </StatusBarItem>
+        </StatusBar>
+
+    </Grid>
 </Controls:MetroWindow>

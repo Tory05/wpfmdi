@@ -211,11 +211,11 @@ namespace WPF.MDI
             gr.Children.Add(sv);
             Grid.SetRow(sv, 1);
             Content = gr;
-
-            if (Environment.OSVersion.Version.Major > 5)
-                ThemeValueChanged(this, new DependencyPropertyChangedEventArgs(ThemeProperty, Theme, ThemeType.Aero));
-            else
-                ThemeValueChanged(this, new DependencyPropertyChangedEventArgs(ThemeProperty, Theme, ThemeType.Luna));
+            ThemeValueChanged(this, new DependencyPropertyChangedEventArgs(ThemeProperty, Theme, ThemeType.Metro));
+            //if (Environment.OSVersion.Version.Major > 5)
+            //    ThemeValueChanged(this, new DependencyPropertyChangedEventArgs(ThemeProperty, Theme, ThemeType.Aero));
+            //else
+            //    ThemeValueChanged(this, new DependencyPropertyChangedEventArgs(ThemeProperty, Theme, ThemeType.Luna));
 
             Loaded += MdiContainer_Loaded;
             SizeChanged += MdiContainer_SizeChanged;
@@ -510,14 +510,16 @@ namespace WPF.MDI
             MdiContainer mdiContainer = (MdiContainer)sender;
             MdiLayout value = (MdiLayout)baseValue;
 
-            if (value == MdiLayout.ArrangeIcons ||
-                mdiContainer.Children.Count < 1)
+            if (value == MdiLayout.ArrangeIcons || mdiContainer.Children.Count < 1)
+            {
                 return value;
+            }
 
             // 1. WindowState.Maximized -> WindowState.Normal
             List<MdiChild> minimizedWindows = new List<MdiChild>(),
                 normalWindows = new List<MdiChild>();
             foreach (MdiChild mdiChild in mdiContainer.Children)
+            {
                 switch (mdiChild.WindowState)
                 {
                     case WindowState.Minimized:
@@ -531,6 +533,7 @@ namespace WPF.MDI
                         normalWindows.Add(mdiChild);
                         break;
                 }
+            }
 
             minimizedWindows.Sort(new MdiChildComparer());
             normalWindows.Sort(new MdiChildComparer());

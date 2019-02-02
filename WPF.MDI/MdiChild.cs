@@ -665,7 +665,9 @@ namespace WPF.MDI
             RaiseEvent(eventArgs);
 
             if (eventArgs.Cancel)
+            {
                 return;
+            }
 
             Close();
 

@@ -97,6 +97,7 @@
     <Compile Include="AccentStyleWindow.xaml.cs">
       <DependentUpon>AccentStyleWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extensions.cs" />
     <Compile Include="ThemeManagerHelper.cs" />
     <Page Include="AccentStyleWindow.xaml">
       <SubType>Designer</SubType>
