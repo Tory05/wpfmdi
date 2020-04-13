@@ -9,7 +9,7 @@
         <Controls:WindowCommands>
             <Button Click="ChangeAppStyleButtonClick">
                 <StackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconModern Width="24" Height="24" Kind="Cupcake" />
+                    <iconPacks:PackIconModern Width="24" Height="24" Kind="Cabinet" />
                     <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="Change App Style..." />
                 </StackPanel>
             </Button>
@@ -25,14 +25,25 @@
                         <MenuItem Header="Fixed Window" Click="AddFixedWindow_Click" />
                         <MenuItem Header="Scroll Window" Click="AddScrollWindow_Click" />
                     </MenuItem>
-                    <MenuItem Header="Theme">
-                        <MenuItem Header="Generic" Name="Generic" ToolTip="Generic Visual Studio designer theme" Click="Generic_Click" />
-                        <MenuItem Header="Luna" Name="Luna" ToolTip="Blue Windows XP theme" Click="Luna_Click" />
-                        <MenuItem Header="Aero" Name="Aero" ToolTip="Windows Vista/7 theme"  Click="Aero_Click" />
-                        <MenuItem Header="Metro" Name="Metro" ToolTip="Windows Vista/7 theme"  Click="Metro_Click" />
-                    </MenuItem>
-                    <MenuItem Header="Windows" x:Name="WindowsMenu" x:FieldModifier="private" />
-                </Menu>
+                        <MenuItem Header="Theme">
+                            <MenuItem Header="Generic" Name="Generic" ToolTip="Generic Visual Studio designer theme" Click="Generic_Click" />
+                            <MenuItem Header="Luna" Name="Luna" ToolTip="Blue Windows XP theme" Click="Luna_Click" />
+                            <MenuItem Header="Aero" Name="Aero" ToolTip="Windows Vista/7 theme"  Click="Aero_Click" />
+                            <MenuItem Header="Metro" Name="Metro" ToolTip="Windows Vista/7 theme"  Click="Metro_Click" />
+                        </MenuItem>
+                        <MenuItem Header="Windows" Icon="{iconPacks:FontAwesome Kind=WindowsBrands}" Visibility="Visible" IsEnabled="True" FontSize="15">
+                            <StackPanel Width="auto" Margin="-30,-5,-30,-5">
+                                <StackPanel x:Name="WindowsChildMenu" Width="auto" Margin="0"/>
+                                <Separator IsEnabled="False" IsHitTestVisible="False" Margin="0"/>
+                                <MenuItem Click="M_Click" Header="Cascade" Icon="{iconPacks:Entypo Kind=FlowCascade}" Tag="Cascade"/>
+                                <MenuItem Click="M_Click" Header="Horizontally" Icon="{iconPacks:Material Kind=ReorderHorizontal}" Tag="Horizontal"/>
+                                <MenuItem Click="M_Click" Header="Vertically" Icon="{iconPacks:Material Kind=ReorderVertical}" Tag="Vertical"/>
+                                <Separator IsEnabled="False" IsHitTestVisible="False" Margin="0"/>
+                                <MenuItem Header="Close all" Click="M_Click" Icon="{iconPacks:Material Kind=CloseOutline}" Margin="0,0,0,0" Tag="Close_all"/>
+                            </StackPanel>
+                        </MenuItem>
+
+                    </Menu>
             </mdi:MdiContainer.Menu>
                 <mdi:MdiChild Title="Empty Window Using XAML" Activated="Window_Activated" Deactivated="Window_Deactivated"/>
             <mdi:MdiChild Name="Window1" Title="Window Using XAML" Position="20,15" Icon="OriginalLogo.png" Activated="Window_Activated" Deactivated="Window_Deactivated">

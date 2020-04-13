@@ -19,7 +19,7 @@ namespace Example.Controls
             MDI = _mdi;
             Width = double.NaN;
             Height = double.NaN;
-            Unloaded += ExampleControl_Unloaded;
+            MDI.Closing += ExampleControl_Unloaded;
         }
 
         private void ExampleControl_Unloaded(object sender, RoutedEventArgs e)

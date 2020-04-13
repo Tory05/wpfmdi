@@ -7,7 +7,6 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Collections.Generic;
 using System.Windows.Input;
-using System.Windows.Data;
 
 namespace WPF.MDI
 {
@@ -462,12 +461,15 @@ namespace WPF.MDI
             MdiContainer mdiContainer = (MdiContainer)sender;
             ThemeType themeType = (ThemeType)e.NewValue;
 
-            bool max_mode = mdiContainer.ActiveMdiChild != null && mdiContainer.ActiveMdiChild.WindowState == WindowState.Maximized;
-            if (max_mode)
+            if (mdiContainer.ActiveMdiChild != null && mdiContainer.ActiveMdiChild.WindowState == WindowState.Maximized)
+            {
                 mdiContainer.ActiveMdiChild.WindowState = WindowState.Normal;
+            }
 
             if (currentResourceDictionary != null)
+            {
                 Application.Current.Resources.MergedDictionaries.Remove(currentResourceDictionary);
+            }
 
             switch (themeType)
             {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -658,7 +657,7 @@ namespace WPF.MDI
         /// Handles the Click event of the closeButton control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
             ClosingEventArgs eventArgs = new ClosingEventArgs(ClosingEvent);
@@ -829,7 +828,7 @@ namespace WPF.MDI
         /// Dependency property event once the position value has changed.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         private static void PositionValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             if ((Point)e.NewValue == (Point)e.OldValue)
@@ -1179,7 +1178,7 @@ namespace WPF.MDI
 
                         mdiChild.Position = new Point(0, 0);
                         mdiChild.Width = mdiContainer.ActualWidth;
-                        mdiChild.Height = mdiContainer.InnerHeight;
+                        mdiChild.Height = mdiContainer.ActualHeight - 2;
 
                         ScrollViewer sv = (ScrollViewer)((Grid)mdiContainer.Content).Children[1];
                         sv.HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden;

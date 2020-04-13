@@ -7,6 +7,8 @@ using System.Windows.Controls;
 using MahApps.Metro.Controls;
 using MahApps.Metro.IconPacks;
 using System.Windows.Media;
+using System.Windows.Data;
+using System.Collections.Specialized;
 
 namespace Example
 {
@@ -22,7 +24,7 @@ namespace Example
         {
             InitializeComponent();
             _original_title = Title;
-            Container.Children.CollectionChanged += (o, e) => Menu_RefreshWindows();
+            Container.Children.CollectionChanged += (o, e) => Menu_RefreshWindows(o, e);
             Container.MdiChildTitleChanged += Container_MdiChildTitleChanged;
 
             Container.Children.Add(new MdiChild
@@ -51,10 +53,9 @@ namespace Example
 
         void Container_MdiChildTitleChanged(object sender, RoutedEventArgs e)
         {
-            if (Container.ActiveMdiChild != null && Container.ActiveMdiChild.WindowState == WindowState.Maximized)
-                Title = _original_title + " - [" + Container.ActiveMdiChild.Title + "]";
-            else
-                Title = _original_title;
+            Title = Container.ActiveMdiChild != null && Container.ActiveMdiChild.WindowState == WindowState.Maximized
+                ? _original_title + " - [" + Container.ActiveMdiChild.Title + "]"
+                : _original_title;
         }
 
         #endregion
@@ -65,7 +66,7 @@ namespace Example
         /// Handles the Click event of the Generic control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void Generic_Click(object sender, RoutedEventArgs e)
         {
             Generic.IsChecked = true;
@@ -164,29 +165,79 @@ namespace Example
         /// <summary>
         /// Refresh windows list
         /// </summary>
-        void Menu_RefreshWindows()
+        public void Menu_RefreshWindows(object sender, NotifyCollectionChangedEventArgs Args)
         {
-            WindowsMenu.Items.Clear();
-            MenuItem mi;
-            for (int i = 0; i < Container.Children.Count; i++)
+            switch (Args.Action)
             {
-                MdiChild child = Container.Children[i];
-                mi = new MenuItem { Header = child.Title };
-                mi.Click += (o, e) => child.Focus();
-                WindowsMenu.Items.Add(mi);
-            }
-            WindowsMenu.Items.Add(new Separator());
-            WindowsMenu.Items.Add(mi = new MenuItem { Header = "Cascade" });
-            mi.Click += (o, e) => Container.MdiLayout = MdiLayout.Cascade;
-            WindowsMenu.Items.Add(mi = new MenuItem { Header = "Horizontally" });
-            mi.Click += (o, e) => Container.MdiLayout = MdiLayout.TileHorizontal;
-            WindowsMenu.Items.Add(mi = new MenuItem { Header = "Vertically" });
-            mi.Click += (o, e) => Container.MdiLayout = MdiLayout.TileVertical;
+                case NotifyCollectionChangedAction.Reset:
+                    WindowsChildMenu.Children.Clear();
+                    break;
+                case NotifyCollectionChangedAction.Add:
+                    for (int i = 0; i < Args.NewItems.Count; i++)
+                    {
+                        MdiChild mdi_ = Args.NewItems[i] as MdiChild;
+                        DrawingImage drawing = ((DrawingImage)mdi_.Icon).Clone();
+                        ((GeometryDrawing)((DrawingGroup)drawing.Drawing).Children[0]).Brush = Brushes.Black;
+                        MenuItem mi = new MenuItem { Icon = new Image { Source = drawing, Height = 16, Width = 16 }, Tag = mdi_ };
 
-            WindowsMenu.Items.Add(new Separator());
-            WindowsMenu.Items.Add(mi = new MenuItem { Header = "Close all" });
-            mi.Click += (o, e) => Container.Children.Clear();
+                        Binding b = new Binding
+                        {
+                            Source = mdi_,
+                            Path = new PropertyPath(MdiChild.TitleProperty),
+                            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+                        };
+                        BindingOperations.SetBinding(mi, HeaderedItemsControl.HeaderProperty, b);
+                        //mi.SetResourceReference(MenuItem.HeaderProperty, mdi_.Title);
+                        mi.Click += (o, e) => mdi_.Focus();
+
+                        WindowsChildMenu.Children.Insert(0, mi);
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    for (int l = 0; l < Args.OldItems.Count; l++)
+                    {
+                        int index = -1;
+                        for (int i = 0; i < WindowsChildMenu.Children.Count; i++)
+                        {
+                            if (((MenuItem)WindowsChildMenu.Children[i]).Tag == Args.OldItems[l])
+                            {
+                                index = i;
+                                break;
+                            }
+                        }
+                        if (index != -1)
+                        {
+                            WindowsChildMenu.Children.RemoveAt(index);
+                        }
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Replace: // Hmmm
+                    break;
+                case NotifyCollectionChangedAction.Move: // Hmmm
+                    break;
+                default:
+                    break;
+            }
         }
+        private void M_Click(object sender, RoutedEventArgs e)
+        {
+            switch (((MenuItem)sender).Tag)
+            {
+                case "Cascade":
+                    Container.MdiLayout = MdiLayout.Cascade;
+                    break;
+                case "Horizontal":
+                    Container.MdiLayout = MdiLayout.TileHorizontal;
+                    break;
+                case "Vertical":
+                    Container.MdiLayout = MdiLayout.TileVertical;
+                    break;
+                case "Close all":
+                    Container.Children.Clear();
+                    break;
+            }
+        }
+
 
         #endregion
 
