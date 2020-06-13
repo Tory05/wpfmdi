@@ -15,4 +15,4 @@ A library to add the traditional Windows Forms Multiple Document Interface (MDI)
 ### Todos
 
  - [x] Fix close event for MDIChild
- - [ ]  Theme Manager to switch Accents
+ - [x]  Theme Manager to switch Accents

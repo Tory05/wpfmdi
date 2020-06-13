@@ -408,7 +408,7 @@ namespace WPF.MDI
         /// Handles the Loaded event of the MdiChild control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void MdiChild_Loaded(object sender, RoutedEventArgs e)
         {
             FrameworkElement currentControl = this;
@@ -440,7 +440,7 @@ namespace WPF.MDI
         /// Handles the GotFocus event of the MdiChild control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void MdiChild_GotFocus(object sender, RoutedEventArgs e)
         {
             if (LastFocousedElement != null)
@@ -495,17 +495,17 @@ namespace WPF.MDI
 
             if (minimizeButton != null)
             {
-                minimizeButton.Click += minimizeButton_Click;
+                minimizeButton.Click += MinimizeButton_Click;
             }
 
             if (maximizeButton != null)
             {
-                maximizeButton.Click += maximizeButton_Click;
+                maximizeButton.Click += MaximizeButton_Click;
             }
 
             if (closeButton != null)
             {
-                closeButton.Click += closeButton_Click;
+                closeButton.Click += CloseButton_Click;
             }
 
             Thumb dragThumb = (Thumb)Template.FindName("DragThumb", this);
@@ -513,17 +513,17 @@ namespace WPF.MDI
             if (dragThumb != null)
             {
                 dragThumb.DragStarted += Thumb_DragStarted;
-                dragThumb.DragDelta += dragThumb_DragDelta;
+                dragThumb.DragDelta += DragThumb_DragDelta;
 
                 dragThumb.MouseDoubleClick += (sender, e) =>
                 {
                     if (WindowState == WindowState.Minimized)
                     {
-                        minimizeButton_Click(null, null);
+                        MinimizeButton_Click(null, null);
                     }
                     else if (WindowState == WindowState.Normal)
                     {
-                        maximizeButton_Click(null, null);
+                        MaximizeButton_Click(null, null);
                     }
                 };
             }
@@ -638,7 +638,7 @@ namespace WPF.MDI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void minimizeButton_Click(object sender, RoutedEventArgs e)
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState == WindowState.Minimized ? WindowState.Normal : WindowState.Minimized;
         }
@@ -647,8 +647,8 @@ namespace WPF.MDI
         /// Handles the Click event of the maximizeButton control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
-        private void maximizeButton_Click(object sender, RoutedEventArgs e)
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
         }
@@ -658,7 +658,7 @@ namespace WPF.MDI
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void closeButton_Click(object sender, RoutedEventArgs e)
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             ClosingEventArgs eventArgs = new ClosingEventArgs(ClosingEvent);
             RaiseEvent(eventArgs);
@@ -750,7 +750,7 @@ namespace WPF.MDI
         /// Handles the DragDelta event of the ResizeRight control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.Controls.Primitives.DragDeltaEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="DragDeltaEventArgs"/> instance containing the event data.</param>
         private void ResizeRight_DragDelta(object sender, DragDeltaEventArgs e)
         {
             if (Width + e.HorizontalChange < MinWidth)
@@ -794,8 +794,8 @@ namespace WPF.MDI
         /// Handles the DragDelta event of the dragThumb control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.Controls.Primitives.DragDeltaEventArgs"/> instance containing the event data.</param>
-        private void dragThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        /// <param name="e">The <see cref="DragDeltaEventArgs"/> instance containing the event data.</param>
+        private void DragThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             if (WindowState == WindowState.Maximized)
             {
@@ -847,7 +847,7 @@ namespace WPF.MDI
         /// Dependency property event once the focused value has changed.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         private static void FocusedValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue == (bool)e.OldValue)
@@ -876,7 +876,7 @@ namespace WPF.MDI
         /// Dependency property event once the minimize box value has changed.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         private static void MinimizeBoxValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             MdiChild mdiChild = (MdiChild)sender;
@@ -1008,7 +1008,7 @@ namespace WPF.MDI
         /// Dependency property event once the close box value has changed.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         private static void CloseBoxValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             MdiChild mdiChild = (MdiChild)sender;
@@ -1110,16 +1110,15 @@ namespace WPF.MDI
                             List<Rect> minimizedWindows = new List<Rect>();
                             for (int i = 0; i < mdiContainer.Children.Count; i++)
                             {
-                                MdiChild child = mdiContainer.Children[i];
-                                if (child != mdiChild && child.WindowState == WindowState.Minimized)
+                                if ((MdiChild)mdiContainer.Children[i] != mdiChild && mdiContainer.Children[i].WindowState == WindowState.Minimized)
                                 {
-                                    minimizedWindows.Add(new Rect(child.Position.X, mdiContainer.InnerHeight - child.Position.Y, child.Width, child.Height));
+                                    minimizedWindows.Add(new Rect(mdiContainer.Children[i].Position.X, mdiContainer.InnerHeight - mdiContainer.Children[i].Position.Y, mdiContainer.Children[i].Width, mdiContainer.Children[i].Height));
                                 }
                             }
                             Rect newWindowPlace;
-                            bool occupied = true;
                             int count = 0,
                                 capacity = Convert.ToInt32(mdiContainer.ActualWidth) / MinimizedWidth;
+                            bool occupied;
                             do
                             {
                                 int row = count / capacity + 1,
@@ -1131,9 +1130,8 @@ namespace WPF.MDI
                                 occupied = false;
                                 foreach (Rect rect in minimizedWindows)
                                 {
-                                    Rect intersection = rect;
-                                    intersection.Intersect(newWindowPlace);
-                                    if (intersection != Rect.Empty && intersection.Width > 0 && intersection.Height > 0)
+                                    rect.Intersect(newWindowPlace);
+                                    if (rect != Rect.Empty && rect.Width > 0 && rect.Height > 0)
                                     {
                                         occupied = true;
                                         break;

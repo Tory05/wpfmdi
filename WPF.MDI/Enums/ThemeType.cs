@@ -1,9 +1,9 @@
 ﻿namespace WPF.MDI
 {
-	/// <summary>
-	/// Type of theme to use.
-	/// </summary>
-	public enum ThemeType
+    /// <summary>
+    /// Type of theme to use.
+    /// </summary>
+    public enum ThemeType
 	{
 		/// <summary>
 		/// Generic Visual Studio designer theme.
@@ -17,9 +17,9 @@
 		/// Windows Vista and 7 theme.
 		/// </summary>
 		Aero,
-        /// <summary>
-        /// Mahappps Metro theme.
-        /// </summary>
-        Metro
-    }
+		/// <summary>
+		/// Mahappps Metro theme.
+		/// </summary>
+		Metro
+	}
 }

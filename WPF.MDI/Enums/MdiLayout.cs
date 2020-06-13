@@ -1,9 +1,9 @@
 ﻿namespace WPF.MDI
 {
-	/// <summary>
-	/// Specifies the layout of MdiChild windows in an MdiContainer control.
-	/// </summary>
-	public enum MdiLayout
+    /// <summary>
+    /// Specifies the layout of MdiChild windows in an MdiContainer control.
+    /// </summary>
+    public enum MdiLayout
 	{
 		/// <summary>
 		/// All MdiChild windows are cascaded within the client region of the MdiContainer control.

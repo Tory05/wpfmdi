@@ -9,6 +9,11 @@ using MahApps.Metro.IconPacks;
 using System.Windows.Media;
 using System.Windows.Data;
 using System.Collections.Specialized;
+using ControlzEx.Theming;
+using System.Linq;
+using static Example.ThemeManagerHelper;
+using System.Collections.Generic;
+using System.Windows.Shapes;
 
 namespace Example
 {
@@ -16,7 +21,9 @@ namespace Example
     /// Interaction logic for Main.xaml
     /// </summary>
     public partial class Main : MetroWindow
-    {
+    { 
+        public List<AccentColorMenuData> AccentColors;
+        public List<AppThemeMenuData> AppThemes;
         /// <summary>
         /// Initializes a new instance of the <see cref="Main"/> class.
         /// </summary>
@@ -26,7 +33,55 @@ namespace Example
             _original_title = Title;
             Container.Children.CollectionChanged += (o, e) => Menu_RefreshWindows(o, e);
             Container.MdiChildTitleChanged += Container_MdiChildTitleChanged;
-
+            // get base accent colors
+            AccentColors = ThemeManager.Current.Themes
+                                            .GroupBy(x => x.ColorScheme)
+                                            .OrderBy(a => a.Key)
+                                            .Select(a => new AccentColorMenuData { Name = a.Key, ColorBrush = a.First().ShowcaseBrush })
+                                            .ToList();
+            //I'm lazy :D
+            AccentColors.ForEach(item =>
+            {
+                MenuItem newItem = new MenuItem 
+                { 
+                    Header = item.Name, 
+                    Tag = item.Name, 
+                    Icon = new Ellipse 
+                    {
+                        Fill = item.ColorBrush,
+                        Stroke = item.ColorBrush,
+                        Width = 16,
+                        Height = 16,
+                        StrokeThickness = 1
+                    } 
+                };
+                newItem.Click += NewItem_Click;
+                Accent.Items.Add(newItem);
+            });
+            // get base metro themes
+            AppThemes = ThemeManager.Current.Themes
+                                         .GroupBy(x => x.BaseColorScheme)
+                                         .Select(x => x.First())
+                                         .Select(a => new AppThemeMenuData() { Name = a.BaseColorScheme, BorderColorBrush = a.Resources["MahApps.Brushes.ThemeForeground"] as Brush, ColorBrush = a.Resources["MahApps.Brushes.ThemeBackground"] as Brush })
+                                         .ToList();
+            AppThemes.ForEach(item =>
+            {
+                MenuItem newTItem = new MenuItem
+                {
+                    Header = item.Name,
+                    Tag = item.Name,
+                    Icon = new Ellipse
+                    {
+                        Fill = item.ColorBrush,
+                        Stroke = new SolidColorBrush(Colors.Silver),
+                        Width = 16,
+                        Height = 16,
+                        StrokeThickness = 1
+                    }
+                };
+                newTItem.Click += NewTItem_Click;
+                Theme.Items.Add(newTItem);
+            });
             Container.Children.Add(new MdiChild
             {
                 Title = "Empty Window Using Code",
@@ -43,8 +98,20 @@ namespace Example
             mdi.Activated += Window_Activated;
             mdi.Deactivated += Window_Deactivated;
             mdi.Content = new ExampleControl(mdi);
-
+            DataContext = this;
             Container.Children.Add(mdi);
+        }
+
+        private void NewTItem_Click(object sender, RoutedEventArgs e)
+        {
+            var a = ((MenuItem)e.Source).Tag.ToString();
+            ThemeManager.Current.ChangeThemeBaseColor(Application.Current, a);
+        }
+
+        private void NewItem_Click(object sender, RoutedEventArgs e)
+        {
+            var a = ((MenuItem)e.Source).Tag.ToString();
+            ThemeManager.Current.ChangeThemeColorScheme(Application.Current, a);
         }
 
         #region Mdi-like title
@@ -324,22 +391,6 @@ namespace Example
         }
         #endregion
 
-        private MetroWindow accentThemeTestWindow;
-        private void ChangeAppStyleButtonClick(object sender, RoutedEventArgs e)
-        {
-            if (accentThemeTestWindow != null)
-            {
-                accentThemeTestWindow.Activate();
-                return;
-            }
-
-            accentThemeTestWindow = new AccentStyleWindow();
-            accentThemeTestWindow.Owner = this;
-            accentThemeTestWindow.Closed += (o, args) => accentThemeTestWindow = null;
-            accentThemeTestWindow.Left = Left + ActualWidth / 2.0;
-            accentThemeTestWindow.Top = Top + ActualHeight / 2.0;
-            accentThemeTestWindow.Show();
-        }
         //Activated/Deactivated from Stefano Gottardo
         private void Window_Activated(object sender, RoutedEventArgs e)
         {

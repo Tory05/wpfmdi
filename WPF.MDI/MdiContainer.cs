@@ -7,6 +7,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Collections.Generic;
 using System.Windows.Input;
+using System.Linq;
 
 namespace WPF.MDI
 {
@@ -190,7 +191,8 @@ namespace WPF.MDI
             gr.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             gr.RowDefinitions.Add(new RowDefinition());
 
-            _topPanel = new DockPanel { Background = SystemColors.MenuBrush };
+            _topPanel = new DockPanel();
+            _topPanel.SetResourceReference(BackgroundProperty, "MahApps.Brushes.ThemeBackground");
             _topPanel.Children.Add(_menu = new Border());
             DockPanel.SetDock(_menu, Dock.Left);
             _topPanel.Children.Add(_buttons = new Border());
@@ -211,10 +213,6 @@ namespace WPF.MDI
             Grid.SetRow(sv, 1);
             Content = gr;
             ThemeValueChanged(this, new DependencyPropertyChangedEventArgs(ThemeProperty, Theme, ThemeType.Metro));
-            //if (Environment.OSVersion.Version.Major > 5)
-            //    ThemeValueChanged(this, new DependencyPropertyChangedEventArgs(ThemeProperty, Theme, ThemeType.Aero));
-            //else
-            //    ThemeValueChanged(this, new DependencyPropertyChangedEventArgs(ThemeProperty, Theme, ThemeType.Luna));
 
             Loaded += MdiContainer_Loaded;
             SizeChanged += MdiContainer_SizeChanged;
@@ -225,16 +223,20 @@ namespace WPF.MDI
         {
             MdiContainer mdiContainer = (MdiContainer)sender;
             if (mdiContainer.Children.Count < 2)
+            {
                 return;
+            }
             switch (e.Key)
             {
                 case Key.Tab:
                     if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
                     {
                         int minZindex = Panel.GetZIndex(mdiContainer.Children[0]);
-                        foreach (MdiChild mdiChild in mdiContainer.Children)
-                            if (Panel.GetZIndex(mdiChild) < minZindex)
-                                minZindex = Panel.GetZIndex(mdiChild);
+                        foreach (MdiChild mdiChild in mdiContainer.Children.Where(mdiChild => Panel.GetZIndex(mdiChild) < minZindex))
+                        {
+                            minZindex = Panel.GetZIndex(mdiChild);
+                        }
+
                         Panel.SetZIndex(mdiContainer.GetTopChild(), minZindex - 1);
                         mdiContainer.GetTopChild().Focus();
                         e.Handled = true;
@@ -415,17 +417,25 @@ namespace WPF.MDI
                 Point farPosition = new Point(mdiChild.Position.X + mdiChild.Width, mdiChild.Position.Y + mdiChild.Height);
 
                 if (farPosition.X > largestPoint.X)
+                {
                     largestPoint.X = farPosition.X;
+                }
 
                 if (farPosition.Y > largestPoint.Y)
+                {
                     largestPoint.Y = farPosition.Y;
+                }
             }
 
             if (_windowCanvas.Width != largestPoint.X)
+            {
                 _windowCanvas.Width = largestPoint.X;
+            }
 
             if (_windowCanvas.Height != largestPoint.Y)
+            {
                 _windowCanvas.Height = largestPoint.Y;
+            }
         }
 
         /// <summary>
@@ -434,7 +444,9 @@ namespace WPF.MDI
         internal MdiChild GetTopChild()
         {
             if (Children.Count < 1)
+            {
                 return null;
+            }
 
             int index = 0, maxZindex = Panel.GetZIndex(Children[0]);
             for (int i = 1, zindex; i < Children.Count; i++)

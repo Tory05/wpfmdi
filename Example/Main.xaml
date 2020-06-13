@@ -5,22 +5,13 @@
     xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     Title="WPF.MDI Example" Height="362" Width="684"  WindowState="Maximized" Loaded="MetroWindow_Loaded">
-    <Controls:MetroWindow.RightWindowCommands>
-        <Controls:WindowCommands>
-            <Button Click="ChangeAppStyleButtonClick">
-                <StackPanel Orientation="Horizontal">
-                    <iconPacks:PackIconModern Width="24" Height="24" Kind="Cabinet" />
-                    <TextBlock Margin="4 0 0 0" VerticalAlignment="Center" Text="Change App Style..." />
-                </StackPanel>
-            </Button>
-        </Controls:WindowCommands>
-    </Controls:MetroWindow.RightWindowCommands>
     <Grid>
-    <DockPanel Margin="0,0,0,20">
+        <DockPanel Margin="0,0,0,20" Background="Transparent">
         <mdi:MdiContainer Name="Container">
             <mdi:MdiContainer.Menu>
                 <Menu DockPanel.Dock="Top">
-                    <MenuItem Header="Add">
+                        
+                        <MenuItem Header="Add">
                         <MenuItem Header="Normal Window" Click="AddWindow_Click" />
                         <MenuItem Header="Fixed Window" Click="AddFixedWindow_Click" />
                         <MenuItem Header="Scroll Window" Click="AddScrollWindow_Click" />
@@ -42,7 +33,8 @@
                                 <MenuItem Header="Close all" Click="M_Click" Icon="{iconPacks:Material Kind=CloseOutline}" Margin="0,0,0,0" Tag="Close_all"/>
                             </StackPanel>
                         </MenuItem>
-
+                        <MenuItem x:Name="Theme" Header="Theme" />
+                        <MenuItem x:Name="Accent" Header="Accent" />
                     </Menu>
             </mdi:MdiContainer.Menu>
                 <mdi:MdiChild Title="Empty Window Using XAML" Activated="Window_Activated" Deactivated="Window_Deactivated"/>

@@ -8,44 +8,9 @@
                 <!-- MahApps.Metro resource dictionaries. Make sure that all file names are Case Sensitive! -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <!-- Theme setting -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Green.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <!--From MainWindow color to resource-->
-            <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.ThumbIndicatorCheckedBrush.Win10">#FFFFFFFF</SolidColorBrush>
-            <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OnSwitchMouseOverBrush.Win10">#99000000</SolidColorBrush>
-            <SolidColorBrush x:Key="MahApps.Metro.Brushes.ToggleSwitchButton.OnSwitchBrush.Win10">#CC000000</SolidColorBrush>
-            <SolidColorBrush x:Key="RightArrowFill">#CC000000</SolidColorBrush>
-            <SolidColorBrush x:Key="MetroDataGrid.InactiveSelectionHighlightTextBrush">#FFFFFFFF</SolidColorBrush>
-            <Color x:Key="HighlightColor">#FF000000</Color>
-            <SolidColorBrush x:Key="AccentColorBrush4">#33000000</SolidColorBrush>
-            <Color x:Key="AccentColor4">#33000000</Color>
-            <SolidColorBrush x:Key="MetroDataGrid.FocusBorderBrush">#CC000000</SolidColorBrush>
-            <SolidColorBrush x:Key="AccentColorBrush2">#99000000</SolidColorBrush>
-            <SolidColorBrush x:Key="AccentColorBrush3">#66000000</SolidColorBrush>
-            <Color x:Key="IdealForegroundColor">#FFFFFFFF</Color>
-            <Color x:Key="AccentColor2">#99000000</Color>
-            <SolidColorBrush x:Key="WindowTitleColorBrush">#CC000000</SolidColorBrush>
-            <SolidColorBrush x:Key="MetroDataGrid.InactiveSelectionHighlightBrush">#99000000</SolidColorBrush>
-            <SolidColorBrush x:Key="MetroDataGrid.MouseOverHighlightBrush">#66000000</SolidColorBrush>
-            <Color x:Key="AccentColor3">#66000000</Color>
-            <SolidColorBrush x:Key="AccentBaseColorBrush">#FF000000</SolidColorBrush>
-            <SolidColorBrush x:Key="AccentColorBrush">#CC000000</SolidColorBrush>
-            <SolidColorBrush x:Key="CheckmarkFill">#CC000000</SolidColorBrush>
-            <Color x:Key="AccentBaseColor">#FF000000</Color>
-            <SolidColorBrush x:Key="IdealForegroundColorBrush">#FFFFFFFF</SolidColorBrush>
-            <Color x:Key="AccentColor">#CC000000</Color>
-            <SolidColorBrush x:Key="MetroDataGrid.HighlightTextBrush">#FFFFFFFF</SolidColorBrush>
-            <LinearGradientBrush StartPoint="1.002,0.5" EndPoint="0.001,0.5" x:Key="ProgressBrush">
-                <LinearGradientBrush.GradientStops>
-                    <GradientStop Color="#FF000000" Offset="0" />
-                    <GradientStop Color="#66000000" Offset="1" />
-                </LinearGradientBrush.GradientStops>
-            </LinearGradientBrush>
-            <SolidColorBrush Color="#FFFFFFFF" Opacity="0.4" x:Key="IdealForegroundDisabledBrush" />
-            <SolidColorBrush x:Key="AccentSelectedColorBrush">#FFFFFFFF</SolidColorBrush>
-            <SolidColorBrush x:Key="HighlightBrush">#FF000000</SolidColorBrush>
-            <SolidColorBrush x:Key="MetroDataGrid.HighlightBrush">#CC000000</SolidColorBrush>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
