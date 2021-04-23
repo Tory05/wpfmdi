@@ -801,23 +801,35 @@ namespace WPF.MDI
             {
                 return;
             }
-
-            double newLeft = Position.X + e.HorizontalChange,
-                newTop = Position.Y + e.VerticalChange;
-
-            if (newLeft < 0)
+            
+            if (((MdiContainer)((Grid)((ScrollViewer)((Canvas)Parent).Parent).Parent).Parent).EnableScrollbar)
             {
-                newLeft = 0;
-            }
+                double newLeft = Position.X + e.HorizontalChange;
+                double newTop = Position.Y + e.VerticalChange;
 
-            if (newTop < 0)
+                if (newLeft < 0)
+                {
+                    newLeft = 0;
+                }
+
+                if (newTop < 0)
+                {
+                    newTop = 0;
+                }
+
+                Position = new Point(newLeft, newTop);
+
+                Container.InvalidateSize();
+            }
+            else
             {
-                newTop = 0;
+                ScrollViewer Scrollviewer = (ScrollViewer)((Canvas)Parent).Parent;
+                double newLeft = Scrollviewer.ActualWidth >= Position.X + Width + e.HorizontalChange ? Position.X + e.HorizontalChange : Position.X;
+                double newTop = Scrollviewer.ActualHeight >= Position.Y + Height + e.VerticalChange ? Position.Y + e.VerticalChange : Position.Y;
+                Position = new Point(newLeft, newTop);
+
+                Container.InvalidateSize();
             }
-
-            Position = new Point(newLeft, newTop);
-
-            Container.InvalidateSize();
         }
 
         #endregion

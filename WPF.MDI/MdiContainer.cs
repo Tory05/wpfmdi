@@ -55,6 +55,10 @@ namespace WPF.MDI
             DependencyProperty.Register("MdiLayout", typeof(MdiLayout), typeof(MdiContainer),
             new UIPropertyMetadata(MdiLayout.ArrangeIcons, null, new CoerceValueCallback(MdiLayoutValueChanged)));
 
+        public static readonly DependencyProperty EnableScrollbarProperty =
+            DependencyProperty.Register("EnableScrollbar", typeof(bool), typeof(MdiContainer),
+            new UIPropertyMetadata(true));
+
         /// <summary>
         /// Identifies the WPF.MDI.MdiContainer.ActiveMdiChild dependency property.
         /// </summary>
@@ -86,7 +90,13 @@ namespace WPF.MDI
             get { return (ThemeType)GetValue(ThemeProperty); }
             set { SetValue(ThemeProperty, value); }
         }
-
+        /// <summary>
+        /// Disable both vertical and horizontal scrolling by moving the mdiChild to the bottom of the container and to the right
+        /// </summary>
+        public bool EnableScrollbar { 
+            get => (bool)GetValue(EnableScrollbarProperty);
+            set => SetValue(EnableScrollbarProperty, value);
+        }
         /// <summary>
         /// Gets or sets the element to display as menu.
         /// Window buttons in maximized mode will be on the same level.
@@ -171,6 +181,7 @@ namespace WPF.MDI
         /// Offset for new window.
         /// </summary>
         private double _windowOffset;
+        private bool enableScrollbar;
 
         #endregion
 
@@ -209,6 +220,8 @@ namespace WPF.MDI
                 IsTabStop = false,
                 Focusable = false
             };
+            sv.HorizontalScrollBarVisibility = EnableScrollbar ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
+            sv.VerticalScrollBarVisibility = EnableScrollbar ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
             gr.Children.Add(sv);
             Grid.SetRow(sv, 1);
             Content = gr;
@@ -332,7 +345,7 @@ namespace WPF.MDI
         /// Handles the CollectionChanged event of the Children control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Collections.Specialized.NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
         private void Children_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
@@ -462,7 +475,6 @@ namespace WPF.MDI
         }
 
         #region Dependency Property Events
-
         /// <summary>
         /// Dependency property event once the theme value has changed.
         /// </summary>
